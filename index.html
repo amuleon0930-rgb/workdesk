@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>All in one 工作台</title>
 
 <style>
@@ -24,7 +25,7 @@ body{
   padding:20px 24px;
   border-radius:14px;
   box-shadow:0 2px 10px rgba(0,0,0,.05);
-  margin-bottom:20px;
+  margin-bottom:22px;
 }
 
 .title{
@@ -38,19 +39,31 @@ body{
   font-size:14px;
 }
 
-.time{
-  margin-top:10px;
-  font-size:13px;
+.time-box{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+  font-size:14px;
   color:#344054;
 }
 
+.time-item{
+  background:#f9fafb;
+  padding:8px 12px;
+  border-radius:8px;
+}
+
 .section{
-  margin-bottom:26px;
+  margin-bottom:28px;
 }
 
 .section h2{
   font-size:20px;
   margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:6px;
 }
 
 .grid{
@@ -85,7 +98,7 @@ body{
 }
 
 .list{
-  line-height:1.8;
+  line-height:1.9;
   font-size:14px;
 }
 </style>
@@ -97,122 +110,165 @@ body{
 
 <!-- 顶部 -->
 <div class="header">
+
   <div class="title">🚀 All in one 工作台</div>
 
   <div class="notice">仅海外事业部内部使用</div>
 
-  <div class="time">
-    地区时间：
-    美国｜新加坡｜越南｜马来西亚
+  <!-- 时间 -->
+  <div class="time-box">
+    <div class="time-item">🇺🇸 美国：<span id="us"></span></div>
+    <div class="time-item">🇸🇬 新加坡：<span id="sg"></span></div>
+    <div class="time-item">🇻🇳 越南：<span id="vn"></span></div>
+    <div class="time-item">🇲🇾 马来西亚：<span id="my"></span></div>
   </div>
+
 </div>
 
 
-<!-- 一、常用网站 -->
+<!-- 常用网站 -->
 <div class="section">
-<h2>一、常用网站</h2>
+<h2>📌 常用网站</h2>
 
 <div class="grid">
 
 <div class="card">
-<h3>1. TikTok运营入口</h3>
+<h3>📱 TikTok运营入口</h3>
 <div class="links">
+
 <a href="https://seller.tiktokshopglobalselling.com/account/login" target="_blank">跨境店后台</a>
 <a href="https://business.tiktok.com/zh" target="_blank">商务中心后台</a>
 <a href="https://ads.tiktok.com" target="_blank">广告户后台</a>
 <a href="https://seller-vn.tiktok.com/account/login" target="_blank">越南本土店后台</a>
 <a href="https://seller.tiktokglobalshop.com/university/home" target="_blank">卖家大学</a>
 <a href="https://www.tiktok.com/" target="_blank">TikTok（前台）</a>
+
 </div>
 </div>
 
 
 <div class="card">
-<h3>2. AI工具</h3>
+<h3>🤖 AI工具</h3>
 <div class="links">
+
 <a href="https://chatgpt.com/" target="_blank">ChatGPT</a>
 <a href="https://gemini.google.com/app" target="_blank">Gemini</a>
-<a href="https://elevenlabs.io/app/sign-in?redirect=/app/speech-synthesis/text-to-speech" target="_blank">ElevenLabs</a>
-<a href="https://labs.google/fx/zh/tools/flow" target="_blank">Nano banana</a>
-<a href="https://labs.google/fx/zh/tools/flow" target="_blank">Veo3</a>
+<a href="https://elevenlabs.io" target="_blank">ElevenLabs</a>
+<a href="https://labs.google/fx/zh/tools/flow" target="_blank">Nano banana / Veo3</a>
 <a href="https://sora.chatgpt.com/explore" target="_blank">Sora2</a>
+
 </div>
 </div>
 
 
 <div class="card">
-<h3>3. 数据分析</h3>
+<h3>📊 数据分析</h3>
 <div class="links">
+
 <a href="https://www.fastmoss.com/zh" target="_blank">FastMoss</a>
 <a href="https://www.kalodata.com/login" target="_blank">Kalodata</a>
 <a href="https://echotik.live/board" target="_blank">EchoTik</a>
+
 </div>
 </div>
 
 
 <div class="card">
-<h3>4. 发货</h3>
+<h3>🚚 发货系统</h3>
 <div class="links">
+
 <a href="https://oms2.szestp.com/login" target="_blank">易速菲</a>
 <a href="https://wms.nxcang.com/#/login" target="_blank">南溪</a>
 <a href="https://www.erp321.com/login.aspx" target="_blank">聚水潭</a>
+
 </div>
 </div>
 
 
 <div class="card">
-<h3>其他常用</h3>
+<h3>🧰 其他常用</h3>
 <div class="links">
+
 <a href="https://translate.google.com/?hl=zh-cn" target="_blank">Google翻译</a>
 <a href="https://wise.com/zh-cn/currency-converter/" target="_blank">汇率计算</a>
-<a href="https://www.henghengmao.net/en" target="_blank">视频去水印批量下载</a>
+<a href="https://www.henghengmao.net/en" target="_blank">视频去水印</a>
 <a href="https://nmqzm.199lab.com/" target="_blank">视频去字幕</a>
-</div>
-</div>
 
 </div>
 </div>
 
+</div>
+</div>
 
-<!-- 二、飞书文档 -->
+
+<!-- 飞书 -->
 <div class="section">
-<h2>二、飞书文档</h2>
+<h2>📄 飞书文档</h2>
 
 <div class="card">
 <div class="links">
-<a href="你的链接" target="_blank">跨境发货SOP</a>
-<a href="你的链接" target="_blank">剪辑SOP</a>
-<a href="你的链接" target="_blank">广告相关SOP</a>
+
+<a href="你的链接">跨境发货SOP</a>
+<a href="你的链接">剪辑SOP</a>
+<a href="你的链接">广告相关SOP</a>
+
 </div>
 </div>
 </div>
 
 
-<!-- 三、小火箭节点 -->
+<!-- 节点 -->
 <div class="section">
-<h2>三、小火箭节点</h2>
+<h2>🚀 小火箭节点</h2>
 
 <div class="card list">
-新加坡（到期时间：2026-02-16）<br>
-美国1（到期时间：2026-02-28）<br>
-美国2（到期时间：2026-02-28）
+
+新加坡（到期：2026-02-16）<br>
+美国1（到期：2026-02-28）<br>
+美国2（到期：2026-02-28）
+
 </div>
 </div>
 
 
-<!-- 四、最新资讯 -->
+<!-- 资讯 -->
 <div class="section">
-<h2>四、最新资讯</h2>
+<h2>📰 最新资讯</h2>
 
 <div class="card list">
-（可放平台公告 / 政策变更 / 重要通知）
+（平台公告 / 政策更新 / 重要提醒）
 </div>
 </div>
 
 </div>
 
 
-<!-- 密码保护 -->
+<!-- 时间脚本 -->
+<script>
+function updateTime(){
+
+  function getTime(zone){
+    return new Date().toLocaleString("zh-CN",{
+      timeZone:zone,
+      hour12:false,
+      hour:"2-digit",
+      minute:"2-digit",
+      second:"2-digit"
+    });
+  }
+
+  document.getElementById("us").innerText = getTime("America/New_York");
+  document.getElementById("sg").innerText = getTime("Asia/Singapore");
+  document.getElementById("vn").innerText = getTime("Asia/Ho_Chi_Minh");
+  document.getElementById("my").innerText = getTime("Asia/Kuala_Lumpur");
+}
+
+updateTime();
+setInterval(updateTime,1000);
+</script>
+
+
+<!-- 密码 -->
 <script>
 const PASSWORD = "YouPure2026";
 

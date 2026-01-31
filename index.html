@@ -1,304 +1,459 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>All in one 工作台</title>
 
 <style>
 :root{
-  --bg:#f6f7fb;
-  --card:#ffffff;
-  --text:#101828;
-  --muted:#667085;
-  --line:rgba(16,24,40,.08);
-  --shadow:0 8px 24px rgba(16,24,40,.06);
-  --shadow-soft:0 2px 10px rgba(16,24,40,.05);
-  --link:#175cd3;
-  --radius:16px;
+  --bg0:#070A12;
+  --bg1:#0B1220;
+  --card: rgba(255,255,255,.06);
+  --card2: rgba(255,255,255,.08);
+  --line: rgba(255,255,255,.10);
+  --text:#EAF0FF;
+  --muted: rgba(234,240,255,.72);
+  --muted2: rgba(234,240,255,.55);
+  --link:#9CC2FF;
+  --link2:#CFE1FF;
+  --accent:#6EE7FF;
+  --accent2:#7C5CFF;
+  --shadow: 0 20px 60px rgba(0,0,0,.45);
+  --shadow2: 0 10px 30px rgba(0,0,0,.35);
+  --radius: 18px;
 }
 
 *{box-sizing:border-box;}
+html,body{height:100%;}
 
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-  background:var(--bg);
   color:var(--text);
+  background:
+    radial-gradient(1100px 600px at 20% 10%, rgba(110,231,255,.18), transparent 60%),
+    radial-gradient(900px 500px at 80% 0%, rgba(124,92,255,.18), transparent 55%),
+    radial-gradient(900px 600px at 60% 100%, rgba(110,231,255,.10), transparent 60%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
   -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* subtle grid */
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 70px 70px;
+  opacity:.12;
+  mask-image: radial-gradient(900px 600px at 50% 0%, black, transparent 70%);
 }
 
 .wrap{
-  max-width:1180px;
-  margin:0 auto;
-  padding:28px 22px 40px;
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 28px 20px 46px;
 }
 
-/* 顶部 */
 .header{
-  background:var(--card);
-  border-radius:18px;
-  padding:22px 26px;
-  border:1px solid var(--line);
-  box-shadow:var(--shadow-soft);
-  margin-bottom:22px;
+  position:relative;
+  border-radius: calc(var(--radius) + 6px);
+  padding: 22px 26px 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: var(--shadow2);
+  overflow:hidden;
 }
+
+.header:after{
+  content:"";
+  position:absolute;
+  left:-30%;
+  top:-40%;
+  width:160%;
+  height:140%;
+  background: radial-gradient(circle at 35% 45%, rgba(110,231,255,.20), transparent 55%),
+              radial-gradient(circle at 70% 35%, rgba(124,92,255,.18), transparent 52%);
+  opacity:.75;
+  filter: blur(8px);
+}
+
+.header > *{position:relative; z-index:1;}
 
 .title{
-  font-size:30px;
-  font-weight:800;
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
+  font-weight: 850;
+  letter-spacing: -.3px;
+  font-size: 36px;            /* 字体更大 */
 }
 
 .notice{
-  margin-top:8px;
-  color:var(--muted);
-  font-size:15px;
+  margin-top: 10px;
+  font-size: 16px;            /* 字体更大 */
+  color: var(--muted);
 }
 
-/* 时间 */
 .time-box{
-  margin-top:14px;
+  margin-top: 16px;
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-  gap:10px;
-  font-size:15px;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 10px;
 }
 
 .time-item{
-  background:#f9fafb;
-  border:1px solid var(--line);
-  padding:10px 12px;
-  border-radius:999px;
+  background: rgba(0,0,0,.20);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  padding: 10px 12px;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25) inset;
 }
 
-/* 分区 */
+.time-item .label{
+  color: var(--muted2);
+  font-size: 14px;
+}
+
+.time-item .value{
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 15px;
+  color: var(--text);
+}
+
 .section{
-  margin-bottom:26px;
+  margin-top: 22px;
 }
 
 .section h2{
-  font-size:18px;
-  margin:18px 0 14px;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
+  font-size: 20px;            /* 字体更大 */
+  margin: 18px 0 14px;
+  color: rgba(234,240,255,.92);
 }
 
-/* 卡片 */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:14px;
+  gap: 14px;
+}
+
+/* ✅ 常用网站：强制桌面端 5 个一排 */
+.grid-5{
+  grid-template-columns: repeat(5, minmax(210px, 1fr));
+}
+
+/* 其他模块默认自适应 */
+.grid-auto{
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .card{
-  background:var(--card);
-  border-radius:16px;
-  padding:16px;
-  border:1px solid var(--line);
-}
-
-.card:hover{
-  box-shadow:var(--shadow);
-  transform:translateY(-1px);
-  transition:.18s ease;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: var(--shadow);
+  padding: 16px 16px 14px;
+  backdrop-filter: blur(10px);
 }
 
 .card h3{
   margin:0 0 12px;
-  font-size:16px;
-  font-weight:700;
+  font-size: 16px;
+  color: rgba(234,240,255,.95);
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
-/* 链接 */
 .links a{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:10px 10px;
-  border-radius:12px;
+  gap: 12px;
+  padding: 11px 12px;         /* 更好点 */
+  border-radius: 14px;
   text-decoration:none;
-  color:var(--link);
-  font-size:15px;
-  border:1px solid transparent;
+  color: var(--link2);
+  font-size: 15px;            /* 字体更大 */
+  border: 1px solid transparent;
+  background: rgba(0,0,0,.18);
 }
 
 .links a::after{
   content:"↗";
-  font-size:13px;
-  opacity:.6;
+  opacity:.65;
+  font-size: 13px;
 }
 
 .links a:hover{
-  background:#f2f4f7;
-  border-color:rgba(16,24,40,.06);
+  border-color: rgba(110,231,255,.35);
+  box-shadow: 0 0 0 3px rgba(110,231,255,.10);
+  background: rgba(0,0,0,.26);
+  color: #ffffff;
 }
 
-/* 文本块 */
 .list{
-  line-height:1.9;
-  font-size:15px;
-  color:#344054;
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--muted);
 }
 
-/* 手机优化 */
-@media(max-width:520px){
-  .wrap{padding:18px 14px 28px;}
-  .title{font-size:24px;}
-  .time-item{border-radius:14px;}
+/* 飞书文档：更像入口按钮 */
+.feishu a{
+  background: rgba(124,92,255,.10);
+}
+.feishu a:hover{
+  border-color: rgba(124,92,255,.45);
+  box-shadow: 0 0 0 3px rgba(124,92,255,.14);
+}
+
+/* 节点二维码布局 */
+.nodes{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.node-card{
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.node-title{
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: rgba(234,240,255,.92);
+}
+
+.node-meta{
+  font-size: 13px;
+  color: var(--muted2);
+  margin-bottom: 10px;
+}
+
+.qr{
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.qr img{
+  width: 88%;
+  height: 88%;
+  object-fit: contain;
+  background: #fff; /* 让黑白码更清晰 */
+  border-radius: 10px;
+  padding: 10px;
+}
+
+/* 最新资讯列表 */
+.news-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.news-item{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+}
+
+.news-item a{
+  color: var(--link2);
+  text-decoration:none;
+  font-size: 15px;
+  line-height: 1.35;
+}
+.news-item a:hover{
+  text-decoration: underline;
+}
+
+.news-meta{
+  font-size: 12px;
+  color: var(--muted2);
+}
+
+/* 响应式 */
+@media (max-width: 1200px){
+  .grid-5{ grid-template-columns: repeat(3, minmax(240px, 1fr)); }
+}
+@media (max-width: 880px){
+  .time-box{ grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+  .grid-5{ grid-template-columns: repeat(2, minmax(240px, 1fr)); }
+  .nodes{ grid-template-columns: 1fr; }
+}
+@media (max-width: 520px){
+  .title{ font-size: 28px; }
+  .wrap{ padding: 18px 14px 30px; }
+  .time-box{ grid-template-columns: 1fr; }
 }
 </style>
 </head>
 
 <body>
-
 <div class="wrap">
 
-<!-- 顶部 -->
-<div class="header">
+  <!-- 顶部 -->
+  <div class="header">
+    <div class="title">🚀 All in one 工作台</div>
+    <div class="notice">仅海外事业部内部使用</div>
 
-  <div class="title">🚀 All in one 工作台</div>
+    <div class="time-box">
+      <div class="time-item"><span class="label">🇺🇸 美国</span><span class="value" id="us"></span></div>
+      <div class="time-item"><span class="label">🇸🇬 新加坡</span><span class="value" id="sg"></span></div>
+      <div class="time-item"><span class="label">🇻🇳 越南</span><span class="value" id="vn"></span></div>
+      <div class="time-item"><span class="label">🇲🇾 马来西亚</span><span class="value" id="my"></span></div>
+    </div>
+  </div>
 
-  <div class="notice">仅海外事业部内部使用</div>
+  <!-- 常用网站 -->
+  <div class="section">
+    <h2>📌 常用网站</h2>
 
-  <div class="time-box">
-    <div class="time-item">🇺🇸 美国：<span id="us"></span></div>
-    <div class="time-item">🇸🇬 新加坡：<span id="sg"></span></div>
-    <div class="time-item">🇻🇳 越南：<span id="vn"></span></div>
-    <div class="time-item">🇲🇾 马来西亚：<span id="my"></span></div>
+    <!-- ✅ 5 个卡片一排（桌面端） -->
+    <div class="grid grid-5">
+
+      <div class="card">
+        <h3>📱 TikTok运营入口</h3>
+        <div class="links">
+          <a href="https://seller.tiktokshopglobalselling.com/account/login" target="_blank">跨境店后台</a>
+          <a href="https://business.tiktok.com/zh" target="_blank">商务中心后台</a>
+          <a href="https://ads.tiktok.com" target="_blank">广告户后台</a>
+          <a href="https://seller-vn.tiktok.com/account/login" target="_blank">越南本土店后台</a>
+          <a href="https://seller.tiktokglobalshop.com/university/home" target="_blank">卖家大学</a>
+          <a href="https://www.tiktok.com/" target="_blank">TikTok（前台）</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🤖 AI工具</h3>
+        <div class="links">
+          <a href="https://chatgpt.com/" target="_blank">ChatGPT</a>
+          <a href="https://gemini.google.com/app" target="_blank">Gemini</a>
+          <a href="https://elevenlabs.io/app/sign-in?redirect=/app/speech-synthesis/text-to-speech" target="_blank">ElevenLabs</a>
+          <a href="https://labs.google/fx/zh/tools/flow" target="_blank">Nano banana / Veo3</a>
+          <a href="https://sora.chatgpt.com/explore" target="_blank">Sora2</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📊 数据分析</h3>
+        <div class="links">
+          <a href="https://www.fastmoss.com/zh" target="_blank">FastMoss</a>
+          <a href="https://www.kalodata.com/login" target="_blank">Kalodata</a>
+          <a href="https://echotik.live/board" target="_blank">EchoTik</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🚚 发货</h3>
+        <div class="links">
+          <a href="https://oms2.szestp.com/login" target="_blank">易速菲</a>
+          <a href="https://wms.nxcang.com/#/login" target="_blank">南溪</a>
+          <a href="https://www.erp321.com/login.aspx" target="_blank">聚水潭</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🧰 其他常用</h3>
+        <div class="links">
+          <a href="https://translate.google.com/?hl=zh-cn" target="_blank">Google翻译</a>
+          <a href="https://wise.com/zh-cn/currency-converter/" target="_blank">汇率计算</a>
+          <a href="https://www.henghengmao.net/en" target="_blank">视频去水印批量下载</a>
+          <a href="https://nmqzm.199lab.com/" target="_blank">视频去字幕</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 飞书文档 -->
+  <div class="section">
+    <h2>📄 飞书文档</h2>
+    <div class="card feishu">
+      <div class="links">
+        <a href="https://g52uj58vy1.feishu.cn/wiki/POSawCwD0ijpd1k5pKlcK11CnEf?from=from_copylink" target="_blank">跨境发货SOP</a>
+        <a href="https://g52uj58vy1.feishu.cn/wiki/HnHHwIPCgiO7FckjI6UcsfVvnEg?from=from_copylink" target="_blank">剪辑SOP</a>
+        <a href="https://g52uj58vy1.feishu.cn/wiki/XU7lw7EUdiwicWk4FI8ca5BEnLf?from=from_copylink" target="_blank">广告相关SOP</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 小火箭节点 -->
+  <div class="section">
+    <h2>🚀 小火箭节点</h2>
+
+    <div class="nodes">
+      <div class="node-card">
+        <div class="node-title">新加坡</div>
+        <div class="node-meta">到期时间：2026-02-16</div>
+        <div class="qr">
+          <img src="新加坡.png" alt="新加坡二维码">
+        </div>
+      </div>
+
+      <div class="node-card">
+        <div class="node-title">美国1</div>
+        <div class="node-meta">到期时间：2026-02-28</div>
+        <div class="qr">
+          <img src="美国1.png" alt="美国1二维码">
+        </div>
+      </div>
+
+      <div class="node-card">
+        <div class="node-title">美国2</div>
+        <div class="node-meta">到期时间：2026-02-28</div>
+        <div class="qr">
+          <img src="美国2.png" alt="美国2二维码">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最新资讯 -->
+  <div class="section">
+    <h2>📰 最新资讯</h2>
+    <div class="card">
+      <div class="list" id="newsStatus">正在加载今日 TikTok 重要资讯...</div>
+      <div class="news-list" id="newsList" style="margin-top:12px;"></div>
+      <div class="list" id="newsHint" style="margin-top:12px; color: rgba(234,240,255,.55); font-size:13px;">
+        注：资讯来源为公开新闻聚合（Google News RSS）。如在国内网络无法加载，请使用可访问外网的网络环境。
+      </div>
+    </div>
   </div>
 
 </div>
 
-
-<!-- 常用网站 -->
-<div class="section">
-<h2>📌 常用网站</h2>
-
-<div class="grid">
-
-<div class="card">
-<h3>📱 TikTok运营入口</h3>
-<div class="links">
-
-<a href="https://seller.tiktokshopglobalselling.com/account/login" target="_blank">跨境店后台</a>
-<a href="https://business.tiktok.com/zh" target="_blank">商务中心后台</a>
-<a href="https://ads.tiktok.com" target="_blank">广告户后台</a>
-<a href="https://seller-vn.tiktok.com/account/login" target="_blank">越南本土店后台</a>
-<a href="https://seller.tiktokglobalshop.com/university/home" target="_blank">卖家大学</a>
-<a href="https://www.tiktok.com/" target="_blank">TikTok（前台）</a>
-
-</div>
-</div>
-
-
-<div class="card">
-<h3>🤖 AI工具</h3>
-<div class="links">
-
-<a href="https://chatgpt.com/" target="_blank">ChatGPT</a>
-<a href="https://gemini.google.com/app" target="_blank">Gemini</a>
-<a href="https://elevenlabs.io" target="_blank">ElevenLabs</a>
-<a href="https://labs.google/fx/zh/tools/flow" target="_blank">Nano banana / Veo3</a>
-<a href="https://sora.chatgpt.com/explore" target="_blank">Sora2</a>
-
-</div>
-</div>
-
-
-<div class="card">
-<h3>📊 数据分析</h3>
-<div class="links">
-
-<a href="https://www.fastmoss.com/zh" target="_blank">FastMoss</a>
-<a href="https://www.kalodata.com/login" target="_blank">Kalodata</a>
-<a href="https://echotik.live/board" target="_blank">EchoTik</a>
-
-</div>
-</div>
-
-
-<div class="card">
-<h3>🚚 发货系统</h3>
-<div class="links">
-
-<a href="https://oms2.szestp.com/login" target="_blank">易速菲</a>
-<a href="https://wms.nxcang.com/#/login" target="_blank">南溪</a>
-<a href="https://www.erp321.com/login.aspx" target="_blank">聚水潭</a>
-
-</div>
-</div>
-
-
-<div class="card">
-<h3>🧰 其他常用</h3>
-<div class="links">
-
-<a href="https://translate.google.com/?hl=zh-cn" target="_blank">Google翻译</a>
-<a href="https://wise.com/zh-cn/currency-converter/" target="_blank">汇率计算</a>
-<a href="https://www.henghengmao.net/en" target="_blank">视频去水印</a>
-<a href="https://nmqzm.199lab.com/" target="_blank">视频去字幕</a>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-<!-- 飞书 -->
-<div class="section">
-<h2>📄 飞书文档</h2>
-
-<div class="card">
-<div class="links">
-
-<a href="你的链接">跨境发货SOP</a>
-<a href="你的链接">剪辑SOP</a>
-<a href="你的链接">广告相关SOP</a>
-
-</div>
-</div>
-</div>
-
-
-<!-- 节点 -->
-<div class="section">
-<h2>🚀 小火箭节点</h2>
-
-<div class="card list">
-
-新加坡（到期：2026-02-16）<br>
-美国1（到期：2026-02-28）<br>
-美国2（到期：2026-02-28）
-
-</div>
-</div>
-
-
-<!-- 资讯 -->
-<div class="section">
-<h2>📰 最新资讯</h2>
-
-<div class="card list">
-（平台公告 / 政策更新 / 重要提醒）
-</div>
-</div>
-
-</div>
-
-
-<!-- 时间 -->
+<!-- 时间脚本 -->
 <script>
 function updateTime(){
-
   function getTime(zone){
     return new Date().toLocaleString("zh-CN",{
       timeZone:zone,
@@ -309,23 +464,71 @@ function updateTime(){
     });
   }
 
-  document.getElementById("us").innerText = getTime("America/New_York");
+  // ✅ 美国改为洛杉矶时间，但标签仍显示“美国”
+  document.getElementById("us").innerText = getTime("America/Los_Angeles");
   document.getElementById("sg").innerText = getTime("Asia/Singapore");
   document.getElementById("vn").innerText = getTime("Asia/Ho_Chi_Minh");
   document.getElementById("my").innerText = getTime("Asia/Kuala_Lumpur");
 }
-
 updateTime();
 setInterval(updateTime,1000);
 </script>
 
+<!-- 最新资讯：自动抓取（Google News RSS -> rss2json 代理） -->
+<script>
+async function loadNews(){
+  const status = document.getElementById("newsStatus");
+  const list = document.getElementById("newsList");
+
+  // Google News RSS（TikTok + TikTok Shop + Seller Center 相关）
+  const rssUrl = "https://news.google.com/rss/search?q=" +
+    encodeURIComponent("TikTok Shop OR TikTok seller center OR TikTok ads policy OR TikTok logistics") +
+    "&hl=en-US&gl=US&ceid=US:en";
+
+  // 通过 rss2json 解决浏览器跨域限制（纯前端最常见方案）
+  const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
+
+  try{
+    const res = await fetch(api, { cache: "no-store" });
+    if(!res.ok) throw new Error("fetch failed");
+    const data = await res.json();
+
+    const items = (data.items || []).slice(0, 6);
+
+    if(items.length === 0){
+      status.innerText = "今日暂无抓取到相关资讯（可稍后刷新）。";
+      return;
+    }
+
+    status.innerText = "今日 TikTok 重要资讯（自动更新）：";
+
+    list.innerHTML = items.map(it => {
+      const date = it.pubDate ? new Date(it.pubDate).toLocaleString("zh-CN", { hour12:false }) : "";
+      const source = it.author ? it.author : (it.link ? new URL(it.link).hostname : "");
+      return `
+        <div class="news-item">
+          <a href="${it.link}" target="_blank">${it.title}</a>
+          <div class="news-meta">${source} · ${date}</div>
+        </div>
+      `;
+    }).join("");
+
+  }catch(e){
+    status.innerText = "资讯加载失败（可能是网络/跨域/服务不可用）。";
+    list.innerHTML = `
+      <div class="news-item">
+        <div class="news-meta">你可以：1）刷新页面 2）换外网环境 3）后续我可以帮你改成“GitHub Actions 每天自动更新”的更稳定方案</div>
+      </div>
+    `;
+  }
+}
+loadNews();
+</script>
 
 <!-- 密码 -->
 <script>
 const PASSWORD = "YouPure2026";
-
 const input = prompt("请输入工作台密码：");
-
 if(input !== PASSWORD){
   alert("密码错误，无权限访问");
   location.href="about:blank";

@@ -9,8 +9,6 @@
 :root{
   --bg0:#070A12;
   --bg1:#0B1220;
-  --card: rgba(255,255,255,.06);
-  --line: rgba(255,255,255,.10);
   --text:#EAF0FF;
   --muted: rgba(234,240,255,.72);
   --muted2: rgba(234,240,255,.55);
@@ -79,7 +77,6 @@ body:before{
   opacity:.75;
   filter: blur(8px);
 }
-
 .header > *{position:relative; z-index:1;}
 
 .title{
@@ -103,7 +100,6 @@ body:before{
   grid-template-columns: repeat(4, minmax(180px, 1fr));
   gap: 10px;
 }
-
 .time-item{
   background: rgba(0,0,0,.20);
   border: 1px solid rgba(255,255,255,.14);
@@ -114,12 +110,7 @@ body:before{
   gap: 10px;
   box-shadow: 0 6px 18px rgba(0,0,0,.25) inset;
 }
-
-.time-item .label{
-  color: var(--muted2);
-  font-size: 14px;
-}
-
+.time-item .label{ color: var(--muted2); font-size: 14px; }
 .time-item .value{
   font-variant-numeric: tabular-nums;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -127,10 +118,7 @@ body:before{
   color: var(--text);
 }
 
-.section{
-  margin-top: 22px;
-}
-
+.section{ margin-top: 22px; }
 .section h2{
   display:flex;
   align-items:center;
@@ -140,17 +128,9 @@ body:before{
   color: rgba(234,240,255,.92);
 }
 
-.grid{
-  display:grid;
-  gap: 14px;
-}
+.grid{ display:grid; gap: 14px; }
+.grid-5{ grid-template-columns: repeat(5, minmax(210px, 1fr)); }
 
-/* 常用网站：桌面端 5 个一排 */
-.grid-5{
-  grid-template-columns: repeat(5, minmax(210px, 1fr));
-}
-
-/* 卡片 */
 .card{
   border-radius: var(--radius);
   background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
@@ -159,7 +139,6 @@ body:before{
   padding: 16px 16px 14px;
   backdrop-filter: blur(10px);
 }
-
 .card h3{
   margin:0 0 12px;
   font-size: 16px;
@@ -182,13 +161,7 @@ body:before{
   border: 1px solid transparent;
   background: rgba(0,0,0,.18);
 }
-
-.links a::after{
-  content:"↗";
-  opacity:.65;
-  font-size: 13px;
-}
-
+.links a::after{ content:"↗"; opacity:.65; font-size: 13px; }
 .links a:hover{
   border-color: rgba(110,231,255,.35);
   box-shadow: 0 0 0 3px rgba(110,231,255,.10);
@@ -196,19 +169,126 @@ body:before{
   color: #ffffff;
 }
 
-/* 飞书：保持宽版（不限制宽度） */
-.feishu a{
-  background: rgba(124,92,255,.10);
+.list{ font-size: 15px; line-height: 1.9; color: var(--muted); }
+
+/* ======= TikTok + 飞书 同排 ======= */
+.row-2{
+  display:grid;
+  grid-template-columns: 2fr 1fr; /* TikTok 更宽，飞书更窄 */
+  gap: 14px;
+  align-items:start;
 }
+
+/* 飞书风格保留 */
+.feishu a{ background: rgba(124,92,255,.10); }
 .feishu a:hover{
   border-color: rgba(124,92,255,.45);
   box-shadow: 0 0 0 3px rgba(124,92,255,.14);
 }
 
-/* 节点二维码布局 */
+/* ======= TikTok 传送门：tabs ======= */
+.tabs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom: 12px;
+}
+.tab-btn{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.18);
+  color: rgba(234,240,255,.82);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor:pointer;
+  font-size: 13px;
+}
+.tab-btn.active{
+  border-color: rgba(110,231,255,.35);
+  box-shadow: 0 0 0 3px rgba(110,231,255,.10);
+  color: rgba(234,240,255,.95);
+}
+.tab-panel{ display:none; }
+.tab-panel.active{ display:block; }
+
+.subhead{
+  margin: 10px 0 8px;
+  font-size: 13px;
+  color: rgba(234,240,255,.70);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.acc-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.acc-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+}
+.badge-tag{
+  display:inline-flex;
+  align-items:center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.16);
+  color: rgba(234,240,255,.78);
+  font-size: 12px;
+  white-space:nowrap;
+}
+.acc-user{
+  flex:1;
+  min-width:0;
+  color: rgba(234,240,255,.92);
+  font-size: 14px;
+}
+.acc-user a{
+  color: var(--link2);
+  text-decoration:none;
+}
+.acc-user a:hover{ text-decoration: underline; }
+.btn-mini{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(234,240,255,.82);
+  border-radius: 12px;
+  padding: 7px 10px;
+  cursor:pointer;
+  font-size: 12px;
+  white-space:nowrap;
+}
+.btn-mini:hover{ box-shadow: 0 0 0 3px rgba(255,255,255,.08); }
+.btn-open{
+  border-color: rgba(110,231,255,.28);
+  background: rgba(110,231,255,.08);
+}
+.btn-open:hover{ box-shadow: 0 0 0 3px rgba(110,231,255,.10); }
+
+.hint{
+  margin-top: 10px;
+  color: rgba(234,240,255,.55);
+  font-size: 12px;
+}
+
+/* ======= 节点 + Apple ID 同排（二维码变小） ======= */
+.node-row{
+  display:grid;
+  grid-template-columns: 2fr 1fr; /* 左：节点 右：Apple ID */
+  gap: 14px;
+  align-items:start;
+}
+
+/* 节点：仍然 3 列，但每个二维码缩小 */
 .nodes{
   display:grid;
-  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
   gap: 14px;
 }
 
@@ -220,14 +300,12 @@ body:before{
   padding: 14px;
   backdrop-filter: blur(10px);
 }
-
 .node-title{
   font-size: 15px;
   font-weight: 700;
   margin-bottom: 10px;
   color: rgba(234,240,255,.92);
 }
-
 .node-meta{
   font-size: 13px;
   color: var(--muted2);
@@ -241,7 +319,6 @@ body:before{
 .badge{
   display:inline-flex;
   align-items:center;
-  gap:6px;
   padding: 4px 10px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.12);
@@ -249,7 +326,6 @@ body:before{
   color: rgba(234,240,255,.85);
   font-size: 12px;
 }
-
 .badge.ok{
   border-color: rgba(110,231,255,.28);
   box-shadow: 0 0 0 3px rgba(110,231,255,.08);
@@ -263,8 +339,11 @@ body:before{
   box-shadow: 0 0 0 3px rgba(255,99,132,.10);
 }
 
+/* ✅ 缩小二维码显示：用 max-width 控制 */
 .qr{
   width: 100%;
+  max-width: 170px;   /* 关键：变小 */
+  margin: 0 auto;
   aspect-ratio: 1 / 1;
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,.12);
@@ -274,29 +353,78 @@ body:before{
   justify-content:center;
   overflow:hidden;
 }
-
 .qr img{
-  width: 88%;
-  height: 88%;
+  width: 90%;
+  height: 90%;
   object-fit: contain;
   background: #fff;
   border-radius: 10px;
-  padding: 10px;
+  padding: 8px; /* 变小一些 */
 }
 
-/* 最新资讯 */
-.list{
-  font-size: 15px;
-  line-height: 1.9;
-  color: var(--muted);
-}
-
-.news-list{
+/* Apple ID 卡片 */
+.apple-list{
   display:flex;
   flex-direction:column;
   gap:10px;
 }
+.apple-item{
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+}
+.apple-title{
+  font-size: 13px;
+  color: rgba(234,240,255,.75);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom: 8px;
+}
+.kv{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  font-size: 13px;
+  color: rgba(234,240,255,.85);
+}
+.kv-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.kv-row .k{
+  color: rgba(234,240,255,.55);
+  width: 54px;
+  flex:0 0 auto;
+}
+.kv-row .v{
+  flex:1;
+  min-width:0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  color: rgba(234,240,255,.92);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.copy-btn{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(234,240,255,.80);
+  border-radius: 12px;
+  padding: 7px 10px;
+  cursor:pointer;
+  font-size: 12px;
+  white-space:nowrap;
+}
+.copy-btn:hover{ box-shadow: 0 0 0 3px rgba(255,255,255,.08); }
 
+/* 最新资讯 */
+.news-list{ display:flex; flex-direction:column; gap:10px; }
 .news-item{
   display:flex;
   flex-direction:column;
@@ -306,24 +434,17 @@ body:before{
   border: 1px solid rgba(255,255,255,.10);
   background: rgba(0,0,0,.18);
 }
-
 .news-item a{
   color: var(--link2);
   text-decoration:none;
   font-size: 15px;
   line-height: 1.35;
 }
-.news-item a:hover{
-  text-decoration: underline;
-}
-
-.news-meta{
-  font-size: 12px;
-  color: var(--muted2);
-}
+.news-item a:hover{ text-decoration: underline; }
+.news-meta{ font-size: 12px; color: var(--muted2); }
 
 /* =========================
-   ✅ 悬浮 To do（方案一）
+   ✅ 悬浮 To do（保持不变）
    ========================= */
 .fab{
   position: fixed;
@@ -342,11 +463,7 @@ body:before{
   box-shadow: 0 18px 50px rgba(0,0,0,.45);
   backdrop-filter: blur(10px);
 }
-
-.fab:hover{
-  box-shadow: 0 0 0 3px rgba(110,231,255,.12), 0 18px 50px rgba(0,0,0,.45);
-}
-
+.fab:hover{ box-shadow: 0 0 0 3px rgba(110,231,255,.12), 0 18px 50px rgba(0,0,0,.45); }
 .fab .icon{
   width: 34px;
   height: 34px;
@@ -358,40 +475,19 @@ body:before{
   border: 1px solid rgba(255,255,255,.12);
   font-size: 16px;
 }
+.fab .txt{ display:flex; flex-direction:column; line-height:1.1; }
+.fab .txt .t1{ font-size: 12px; color: rgba(234,240,255,.60); }
+.fab .txt .t2{ font-size: 14px; font-weight: 750; color: rgba(234,240,255,.95); }
 
-.fab .txt{
-  display:flex;
-  flex-direction:column;
-  line-height:1.1;
-}
-.fab .txt .t1{
-  font-size: 12px;
-  color: rgba(234,240,255,.60);
-}
-.fab .txt .t2{
-  font-size: 14px;
-  font-weight: 750;
-  color: rgba(234,240,255,.95);
-}
-
-/* overlay */
 .drawer-overlay{
-  position: fixed;
-  inset: 0;
-  z-index: 60;
+  position: fixed; inset: 0; z-index: 60;
   background: rgba(0,0,0,.45);
-  opacity: 0;
-  pointer-events: none;
+  opacity: 0; pointer-events: none;
   transition: opacity .18s ease;
 }
-
-/* drawer */
 .drawer{
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 320px; /* ✅ 你选的 A：偏窄 */
+  position: fixed; top: 0; right: 0; height: 100%;
+  width: 320px;
   z-index: 70;
   transform: translateX(100%);
   transition: transform .22s ease;
@@ -399,28 +495,14 @@ body:before{
   border-left: 1px solid rgba(255,255,255,.14);
   box-shadow: -24px 0 60px rgba(0,0,0,.55);
   backdrop-filter: blur(12px);
-  display:flex;
-  flex-direction:column;
+  display:flex; flex-direction:column;
 }
-
 .drawer-head{
   padding: 16px 14px 10px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
   border-bottom: 1px solid rgba(255,255,255,.10);
 }
-
-.drawer-title{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size: 16px;
-  font-weight: 800;
-  color: rgba(234,240,255,.95);
-}
-
+.drawer-title{ display:flex; align-items:center; gap:10px; font-size: 16px; font-weight: 800; color: rgba(234,240,255,.95); }
 .drawer-close{
   border: 1px solid rgba(255,255,255,.12);
   background: rgba(0,0,0,.18);
@@ -430,23 +512,15 @@ body:before{
   cursor:pointer;
   font-size: 12px;
 }
-.drawer-close:hover{
-  box-shadow: 0 0 0 3px rgba(255,255,255,.08);
-}
+.drawer-close:hover{ box-shadow: 0 0 0 3px rgba(255,255,255,.08); }
+.drawer-body{ padding: 12px 14px 16px; overflow:auto; }
 
-.drawer-body{
-  padding: 12px 14px 16px;
-  overflow:auto;
-}
-
-/* To do inside drawer */
 .todo-card{
   border-radius: var(--radius);
   background: rgba(0,0,0,.16);
   border: 1px solid rgba(255,255,255,.10);
   padding: 14px;
 }
-
 .todo-card h3{
   margin:0 0 10px;
   font-size: 14px;
@@ -455,13 +529,7 @@ body:before{
   align-items:center;
   gap:8px;
 }
-
-.todo-input{
-  display:flex;
-  gap:10px;
-  margin-bottom: 10px;
-}
-
+.todo-input{ display:flex; gap:10px; margin-bottom: 10px; }
 .todo-input input{
   flex:1;
   background: rgba(0,0,0,.22);
@@ -472,11 +540,7 @@ body:before{
   font-size: 14px;
   outline:none;
 }
-
-.todo-input input::placeholder{
-  color: rgba(234,240,255,.45);
-}
-
+.todo-input input::placeholder{ color: rgba(234,240,255,.45); }
 .todo-input button{
   background: linear-gradient(180deg, rgba(110,231,255,.22), rgba(110,231,255,.10));
   border: 1px solid rgba(110,231,255,.35);
@@ -487,45 +551,18 @@ body:before{
   cursor:pointer;
   white-space:nowrap;
 }
-
-.todo-input button:hover{
-  box-shadow: 0 0 0 3px rgba(110,231,255,.12);
-}
-
-.todo-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
+.todo-input button:hover{ box-shadow: 0 0 0 3px rgba(110,231,255,.12); }
+.todo-list{ display:flex; flex-direction:column; gap:10px; }
 .todo-item{
-  display:flex;
-  align-items:center;
-  gap:10px;
+  display:flex; align-items:center; gap:10px;
   padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,.10);
   background: rgba(0,0,0,.18);
 }
-
-.todo-item input[type="checkbox"]{
-  width:18px;
-  height:18px;
-  accent-color: #6EE7FF;
-}
-
-.todo-text{
-  flex:1;
-  font-size: 14px;
-  color: rgba(234,240,255,.92);
-  line-height:1.3;
-}
-
-.todo-text.done{
-  color: rgba(234,240,255,.45);
-  text-decoration: line-through;
-}
-
+.todo-item input[type="checkbox"]{ width:18px; height:18px; accent-color: #6EE7FF; }
+.todo-text{ flex:1; font-size: 14px; color: rgba(234,240,255,.92); line-height:1.3; }
+.todo-text.done{ color: rgba(234,240,255,.45); text-decoration: line-through; }
 .todo-del{
   background: rgba(124,92,255,.12);
   border: 1px solid rgba(124,92,255,.25);
@@ -535,11 +572,7 @@ body:before{
   cursor:pointer;
   font-size: 12px;
 }
-
-.todo-del:hover{
-  box-shadow: 0 0 0 3px rgba(124,92,255,.12);
-}
-
+.todo-del:hover{ box-shadow: 0 0 0 3px rgba(124,92,255,.12); }
 .todo-footer{
   margin-top: 10px;
   display:flex;
@@ -548,7 +581,6 @@ body:before{
   color: rgba(234,240,255,.55);
   font-size: 12px;
 }
-
 .todo-clear{
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.10);
@@ -558,28 +590,21 @@ body:before{
   cursor:pointer;
   font-size: 12px;
 }
-.todo-clear:hover{
-  box-shadow: 0 0 0 3px rgba(255,255,255,.08);
-}
+.todo-clear:hover{ box-shadow: 0 0 0 3px rgba(255,255,255,.08); }
 
-/* open state */
-body.drawer-open .drawer-overlay{
-  opacity: 1;
-  pointer-events: auto;
-}
-body.drawer-open .drawer{
-  transform: translateX(0);
-}
+body.drawer-open .drawer-overlay{ opacity: 1; pointer-events: auto; }
+body.drawer-open .drawer{ transform: translateX(0); }
 
 /* 响应式 */
 @media (max-width: 1200px){
   .grid-5{ grid-template-columns: repeat(3, minmax(240px, 1fr)); }
 }
-@media (max-width: 880px){
+@media (max-width: 980px){
   .time-box{ grid-template-columns: repeat(2, minmax(180px, 1fr)); }
   .grid-5{ grid-template-columns: repeat(2, minmax(240px, 1fr)); }
+  .row-2{ grid-template-columns: 1fr; }
+  .node-row{ grid-template-columns: 1fr; }
   .nodes{ grid-template-columns: 1fr; }
-  .drawer{ width: 320px; }
 }
 @media (max-width: 520px){
   .title{ font-size: 28px; }
@@ -661,61 +686,228 @@ body.drawer-open .drawer{
           <a href="https://wise.com/zh-cn/currency-converter/" target="_blank">汇率计算</a>
           <a href="https://www.henghengmao.net/en" target="_blank">视频去水印批量下载</a>
           <a href="https://nmqzm.199lab.com/" target="_blank">视频去字幕</a>
+          <!-- ✅ 新增 -->
+          <a href="https://sucaiwang.zhishangsoft.com/#/login?redirect=%2Fhome" target="_blank">云视频管家</a>
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- 飞书文档（恢复宽版） -->
+  <!-- TikTok账号传送门 + 飞书文档（同排） -->
   <div class="section">
-    <h2>📄 飞书文档</h2>
-    <div class="card feishu">
-      <div class="links">
-        <a href="https://g52uj58vy1.feishu.cn/wiki/POSawCwD0ijpd1k5pKlcK11CnEf?from=from_copylink" target="_blank">跨境发货SOP</a>
-        <a href="https://g52uj58vy1.feishu.cn/wiki/HnHHwIPCgiO7FckjI6UcsfVvnEg?from=from_copylink" target="_blank">剪辑SOP</a>
-        <a href="https://g52uj58vy1.feishu.cn/wiki/XU7lw7EUdiwicWk4FI8ca5BEnLf?from=from_copylink" target="_blank">广告相关SOP</a>
+    <div class="row-2">
+
+      <!-- TikTok账号传送门 -->
+      <div class="card">
+        <h3>🚪 TikTok账号传送门</h3>
+
+        <div class="tabs" id="ttTabs">
+          <button class="tab-btn active" data-tab="us">美国</button>
+          <button class="tab-btn" data-tab="sg">新加坡</button>
+          <button class="tab-btn" data-tab="vn">越南</button>
+          <button class="tab-btn" data-tab="my">马来西亚</button>
+        </div>
+
+        <!-- 美国 -->
+        <div class="tab-panel active" id="tab-us">
+          <div class="subhead">自营账号</div>
+          <div class="acc-list" id="us-self">
+            <div class="acc-item">
+              <span class="badge-tag">官号</span>
+              <div class="acc-user">@<a href="https://www.tiktok.com/@youpure_official" target="_blank">youpure_official</a></div>
+              <button class="btn-mini btn-open" data-open="https://www.tiktok.com/@youpure_official">打开</button>
+              <button class="btn-mini" data-copy="youpure_official">复制账号</button>
+              <button class="btn-mini" data-copy="https://www.tiktok.com/@youpure_official">复制链接</button>
+            </div>
+
+            <div class="acc-item">
+              <span class="badge-tag">渠道号</span>
+              <div class="acc-user">@<a href="https://www.tiktok.com/@alice.love.u0" target="_blank">alice.love.u0</a></div>
+              <button class="btn-mini btn-open" data-open="https://www.tiktok.com/@alice.love.u0">打开</button>
+              <button class="btn-mini" data-copy="alice.love.u0">复制账号</button>
+              <button class="btn-mini" data-copy="https://www.tiktok.com/@alice.love.u0">复制链接</button>
+            </div>
+
+            <div class="acc-item">
+              <span class="badge-tag">橱窗号</span>
+              <div class="acc-user">@<a href="https://www.tiktok.com/@user210518057249868" target="_blank">user210518057249868</a></div>
+              <button class="btn-mini btn-open" data-open="https://www.tiktok.com/@user210518057249868">打开</button>
+              <button class="btn-mini" data-copy="user210518057249868">复制账号</button>
+              <button class="btn-mini" data-copy="https://www.tiktok.com/@user210518057249868">复制链接</button>
+            </div>
+
+            <div class="acc-item">
+              <span class="badge-tag">报白号</span>
+              <div class="acc-user">@<a href="https://www.tiktok.com/@hnckuyd2m0" target="_blank">hnckuyd2m0</a></div>
+              <button class="btn-mini btn-open" data-open="https://www.tiktok.com/@hnckuyd2m0">打开</button>
+              <button class="btn-mini" data-copy="hnckuyd2m0">复制账号</button>
+              <button class="btn-mini" data-copy="https://www.tiktok.com/@hnckuyd2m0">复制链接</button>
+            </div>
+
+            <div class="acc-item">
+              <span class="badge-tag">报白号</span>
+              <div class="acc-user">@<a href="https://www.tiktok.com/@smqnfajfm6" target="_blank">smqnfajfm6</a></div>
+              <button class="btn-mini btn-open" data-open="https://www.tiktok.com/@smqnfajfm6">打开</button>
+              <button class="btn-mini" data-copy="smqnfajfm6">复制账号</button>
+              <button class="btn-mini" data-copy="https://www.tiktok.com/@smqnfajfm6">复制链接</button>
+            </div>
+          </div>
+
+          <div class="subhead">达人账号</div>
+          <div class="hint">（待补充）</div>
+        </div>
+
+        <!-- 新加坡 -->
+        <div class="tab-panel" id="tab-sg">
+          <div class="hint">（待补充）</div>
+        </div>
+
+        <!-- 越南 -->
+        <div class="tab-panel" id="tab-vn">
+          <div class="hint">（待补充）</div>
+        </div>
+
+        <!-- 马来西亚 -->
+        <div class="tab-panel" id="tab-my">
+          <div class="hint">（待补充）</div>
+        </div>
+
       </div>
+
+      <!-- 飞书文档（变窄放右侧） -->
+      <div class="card feishu">
+        <h3>📄 飞书文档</h3>
+        <div class="links">
+          <a href="https://g52uj58vy1.feishu.cn/wiki/POSawCwD0ijpd1k5pKlcK11CnEf?from=from_copylink" target="_blank">跨境发货SOP</a>
+          <a href="https://g52uj58vy1.feishu.cn/wiki/HnHHwIPCgiO7FckjI6UcsfVvnEg?from=from_copylink" target="_blank">剪辑SOP</a>
+          <a href="https://g52uj58vy1.feishu.cn/wiki/XU7lw7EUdiwicWk4FI8ca5BEnLf?from=from_copylink" target="_blank">广告相关SOP</a>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- 小火箭节点 -->
+  <!-- 小火箭节点 + Apple ID（同排） -->
   <div class="section">
     <h2>🪜 小火箭节点</h2>
 
-    <div class="nodes">
-      <div class="node-card">
-        <div class="node-title">新加坡</div>
-        <div class="node-meta">
-          <span>到期时间：2026-02-16</span>
-          <span class="badge" id="badge-sg">计算中…</span>
-        </div>
-        <div class="qr">
-          <img src="新加坡.png" alt="新加坡二维码">
+    <div class="node-row">
+
+      <!-- 左：节点 -->
+      <div>
+        <div class="nodes">
+          <div class="node-card">
+            <div class="node-title">新加坡</div>
+            <div class="node-meta">
+              <span>到期时间：2026-02-16</span>
+              <span class="badge" id="badge-sg">计算中…</span>
+            </div>
+            <div class="qr">
+              <img src="新加坡.png" alt="新加坡二维码">
+            </div>
+          </div>
+
+          <div class="node-card">
+            <div class="node-title">美国1</div>
+            <div class="node-meta">
+              <span>到期时间：2026-02-28</span>
+              <span class="badge" id="badge-us1">计算中…</span>
+            </div>
+            <div class="qr">
+              <img src="美国1.png" alt="美国1二维码">
+            </div>
+          </div>
+
+          <div class="node-card">
+            <div class="node-title">美国2</div>
+            <div class="node-meta">
+              <span>到期时间：2026-02-28</span>
+              <span class="badge" id="badge-us2">计算中…</span>
+            </div>
+            <div class="qr">
+              <img src="美国2.png" alt="美国2二维码">
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="node-card">
-        <div class="node-title">美国1</div>
-        <div class="node-meta">
-          <span>到期时间：2026-02-28</span>
-          <span class="badge" id="badge-us1">计算中…</span>
+      <!-- 右：Apple ID（4个地区） -->
+      <div class="card">
+        <h3>🍎 Apple ID（各区）</h3>
+
+        <div class="apple-list" id="appleList">
+
+          <!-- 你把下面 4 个地区的 账号/密码 替换成真实值即可 -->
+          <div class="apple-item">
+            <div class="apple-title"><span>🇺🇸 美国</span></div>
+            <div class="kv">
+              <div class="kv-row">
+                <div class="k">账号</div>
+                <div class="v" id="aid-us-user">待填写</div>
+                <button class="copy-btn" data-copy-target="aid-us-user">复制</button>
+              </div>
+              <div class="kv-row">
+                <div class="k">密码</div>
+                <div class="v" id="aid-us-pass">待填写</div>
+                <button class="copy-btn" data-copy-target="aid-us-pass">复制</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="apple-item">
+            <div class="apple-title"><span>🇸🇬 新加坡</span></div>
+            <div class="kv">
+              <div class="kv-row">
+                <div class="k">账号</div>
+                <div class="v" id="aid-sg-user">待填写</div>
+                <button class="copy-btn" data-copy-target="aid-sg-user">复制</button>
+              </div>
+              <div class="kv-row">
+                <div class="k">密码</div>
+                <div class="v" id="aid-sg-pass">待填写</div>
+                <button class="copy-btn" data-copy-target="aid-sg-pass">复制</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="apple-item">
+            <div class="apple-title"><span>🇻🇳 越南</span></div>
+            <div class="kv">
+              <div class="kv-row">
+                <div class="k">账号</div>
+                <div class="v" id="aid-vn-user">待填写</div>
+                <button class="copy-btn" data-copy-target="aid-vn-user">复制</button>
+              </div>
+              <div class="kv-row">
+                <div class="k">密码</div>
+                <div class="v" id="aid-vn-pass">待填写</div>
+                <button class="copy-btn" data-copy-target="aid-vn-pass">复制</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="apple-item">
+            <div class="apple-title"><span>🇲🇾 马来西亚</span></div>
+            <div class="kv">
+              <div class="kv-row">
+                <div class="k">账号</div>
+                <div class="v" id="aid-my-user">待填写</div>
+                <button class="copy-btn" data-copy-target="aid-my-user">复制</button>
+              </div>
+              <div class="kv-row">
+                <div class="k">密码</div>
+                <div class="v" id="aid-my-pass">待填写</div>
+                <button class="copy-btn" data-copy-target="aid-my-pass">复制</button>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div class="qr">
-          <img src="美国1.png" alt="美国1二维码">
-        </div>
+
+        <div class="hint">提示：Apple ID 为明文展示（按你选择的方便优先）。</div>
       </div>
 
-      <div class="node-card">
-        <div class="node-title">美国2</div>
-        <div class="node-meta">
-          <span>到期时间：2026-02-28</span>
-          <span class="badge" id="badge-us2">计算中…</span>
-        </div>
-        <div class="qr">
-          <img src="美国2.png" alt="美国2二维码">
-        </div>
-      </div>
     </div>
   </div>
 
@@ -733,7 +925,7 @@ body.drawer-open .drawer{
 
 </div>
 
-<!-- ✅ 悬浮按钮（右下角 A） -->
+<!-- ✅ 悬浮按钮（右下角） -->
 <div class="fab" id="todoFab" aria-label="To do List">
   <div class="icon">📝</div>
   <div class="txt">
@@ -782,9 +974,7 @@ function updateTime(){
       second:"2-digit"
     });
   }
-
-  // 美国：洛杉矶时间（标签仍为“美国”）
-  document.getElementById("us").innerText = getTime("America/Los_Angeles");
+  document.getElementById("us").innerText = getTime("America/Los_Angeles"); // 美国=洛杉矶时间
   document.getElementById("sg").innerText = getTime("Asia/Singapore");
   document.getElementById("vn").innerText = getTime("Asia/Ho_Chi_Minh");
   document.getElementById("my").innerText = getTime("Asia/Kuala_Lumpur");
@@ -873,37 +1063,79 @@ async function loadNews(){
 loadNews();
 </script>
 
+<!-- TikTok Tabs + 复制/打开 -->
+<script>
+(function(){
+  const tabs = document.getElementById("ttTabs");
+  if(tabs){
+    tabs.addEventListener("click", (e)=>{
+      const btn = e.target.closest(".tab-btn");
+      if(!btn) return;
+      const key = btn.getAttribute("data-tab");
+
+      document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+
+      document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
+      const panel = document.getElementById("tab-" + key);
+      if(panel) panel.classList.add("active");
+    });
+  }
+
+  // 打开/复制
+  document.addEventListener("click", async (e)=>{
+    const openBtn = e.target.closest("[data-open]");
+    if(openBtn){
+      const url = openBtn.getAttribute("data-open");
+      window.open(url, "_blank");
+      return;
+    }
+
+    const copyBtn = e.target.closest("[data-copy]");
+    if(copyBtn){
+      const text = copyBtn.getAttribute("data-copy");
+      try{
+        await navigator.clipboard.writeText(text);
+        const old = copyBtn.textContent;
+        copyBtn.textContent = "已复制";
+        setTimeout(()=>copyBtn.textContent = old, 900);
+      }catch(err){
+        alert("复制失败，请手动复制。");
+      }
+      return;
+    }
+
+    const copyTargetBtn = e.target.closest("[data-copy-target]");
+    if(copyTargetBtn){
+      const id = copyTargetBtn.getAttribute("data-copy-target");
+      const el = document.getElementById(id);
+      const text = el ? el.textContent.trim() : "";
+      try{
+        await navigator.clipboard.writeText(text);
+        const old = copyTargetBtn.textContent;
+        copyTargetBtn.textContent = "已复制";
+        setTimeout(()=>copyTargetBtn.textContent = old, 900);
+      }catch(err){
+        alert("复制失败，请手动复制。");
+      }
+    }
+  });
+})();
+</script>
+
 <!-- ✅ Drawer 开关：记住上次状态（B） -->
 <script>
 const DRAWER_KEY = "aio_drawer_open_v1";
-
 function setDrawer(open){
   document.body.classList.toggle("drawer-open", open);
   localStorage.setItem(DRAWER_KEY, open ? "1" : "0");
 }
+function getDrawer(){ return localStorage.getItem(DRAWER_KEY) === "1"; }
 
-function getDrawer(){
-  return localStorage.getItem(DRAWER_KEY) === "1";
-}
-
-document.getElementById("todoFab").addEventListener("click", ()=>{
-  setDrawer(true);
-});
-
-document.getElementById("drawerCloseBtn").addEventListener("click", ()=>{
-  setDrawer(false);
-});
-
-document.getElementById("drawerOverlay").addEventListener("click", ()=>{
-  setDrawer(false);
-});
-
-// ESC 关闭
-document.addEventListener("keydown", (e)=>{
-  if(e.key === "Escape") setDrawer(false);
-});
-
-// 初始化：按上次状态打开/关闭（B）
+document.getElementById("todoFab").addEventListener("click", ()=> setDrawer(true));
+document.getElementById("drawerCloseBtn").addEventListener("click", ()=> setDrawer(false));
+document.getElementById("drawerOverlay").addEventListener("click", ()=> setDrawer(false));
+document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") setDrawer(false); });
 setDrawer(getDrawer());
 </script>
 
@@ -919,10 +1151,7 @@ function loadTodos(){
     return [];
   }
 }
-
-function saveTodos(todos){
-  localStorage.setItem(TODO_KEY, JSON.stringify(todos));
-}
+function saveTodos(todos){ localStorage.setItem(TODO_KEY, JSON.stringify(todos)); }
 
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, s => ({
@@ -973,9 +1202,7 @@ function clearDone(){
 }
 
 document.getElementById("todoAddBtn").addEventListener("click", addTodo);
-document.getElementById("todoInput").addEventListener("keydown", (e)=>{
-  if(e.key === "Enter") addTodo();
-});
+document.getElementById("todoInput").addEventListener("keydown", (e)=>{ if(e.key === "Enter") addTodo(); });
 
 document.getElementById("todoList").addEventListener("click", (e)=>{
   const todos = loadTodos();
@@ -1001,7 +1228,6 @@ document.getElementById("todoList").addEventListener("click", (e)=>{
 });
 
 document.getElementById("todoClearBtn").addEventListener("click", clearDone);
-
 renderTodos();
 </script>
 

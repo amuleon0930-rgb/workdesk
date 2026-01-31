@@ -1,160 +1,1312 @@
-export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-
-    // 只提供一个接口：/news
-    if (url.pathname !== "/news") {
-      return new Response("OK", { status: 200 });
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>All in one 工作台</title>
+  <meta name="description" content="All in one 工作台（海外事业部内部使用）" />
+  <style>
+    :root{
+      --bg0:#06070b;
+      --bg1:#0b1020;
+      --glass: rgba(255,255,255,.06);
+      --glass2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.14);
+      --stroke2: rgba(255,255,255,.10);
+      --txt: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --muted2: rgba(255,255,255,.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --shadow2: 0 8px 20px rgba(0,0,0,.35);
+      --radius: 18px;
+      --radius2: 14px;
+      --navW: 190px;
+      --gap: 16px;
+      --contentMax: 1280px;
+      --accentA: rgba(124,92,255,.75);
+      --accentB: rgba(20,190,255,.55);
+      --ok: rgba(94, 234, 212, .9);
+      --warn: rgba(251, 191, 36, .9);
+      --bad: rgba(248, 113, 113, .92);
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC",
+              "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--txt);
+      background:
+        radial-gradient(1200px 600px at 10% 20%, rgba(20,190,255,.22), transparent 55%),
+        radial-gradient(900px 600px at 80% 10%, rgba(124,92,255,.22), transparent 55%),
+        radial-gradient(1100px 700px at 70% 70%, rgba(255,255,255,.05), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
     }
 
-    // 先读缓存（KV）
-    const cached = await env.NEWS_KV.get("today", "json");
-    if (cached) {
-      return json(cached);
+    /* Layout */
+    .shell{
+      display:flex;
+      gap: var(--gap);
+      padding: 18px 18px 26px;
+      align-items:flex-start;
+    }
+    .nav{
+      position:sticky;
+      top:18px;
+      width: var(--navW);
+      flex: 0 0 var(--navW);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid var(--stroke2);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(14px);
+      padding: 10px;
+    }
+    .nav .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 10px 6px;
+      border-radius: 14px;
+      user-select:none;
+    }
+    .brand .logo{
+      width:34px;height:34px;border-radius:12px;
+      display:grid;place-items:center;
+      background: linear-gradient(135deg, rgba(124,92,255,.35), rgba(20,190,255,.26));
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .brand .logo span{font-size:18px}
+    .brand .name{
+      font-weight: 780;
+      letter-spacing:.2px;
+      font-size: 14px;
+      line-height:1.15;
+    }
+    .nav ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+    .nav a{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      color: var(--txt);
+      text-decoration:none;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      transition: .18s ease;
+      cursor:pointer;
+      user-select:none;
+    }
+    .nav a:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
+    .nav a.active{
+      background: linear-gradient(135deg, rgba(124,92,255,.18), rgba(20,190,255,.12));
+      border-color: rgba(124,92,255,.35);
+      box-shadow: 0 0 0 2px rgba(124,92,255,.12) inset;
+    }
+    .nav .icon{
+      width:22px;height:22px;border-radius:9px;
+      display:grid;place-items:center;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      flex: 0 0 22px;
+      font-size: 12px;
+    }
+    .nav .label{
+      font-weight: 650;
+      font-size: 13px;
     }
 
-    // 没缓存就现拉现算（首次访问会慢一点）
-    const data = await buildNews(env);
-    await env.NEWS_KV.put("today", JSON.stringify(data), { expirationTtl: 60 * 60 * 18 }); // 18小时
-    return json(data);
-  },
-
-  async scheduled(event, env, ctx) {
-    // 每天定时刷新缓存
-    const data = await buildNews(env);
-    await env.NEWS_KV.put("today", JSON.stringify(data), { expirationTtl: 60 * 60 * 24 });
-  }
-};
-
-function json(obj) {
-  return new Response(JSON.stringify(obj), {
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store"
+    .main{
+      flex: 1 1 auto;
+      min-width: 0;
+      display:flex;
+      justify-content:center;
     }
-  });
-}
-
-/**
- * 1) 拉取资讯（这里用 Google News RSS 举例）
- * 2) 调用 OpenAI 总结成中文要点
- */
-async function buildNews(env) {
-  const now = new Date();
-  const date = now.toISOString().slice(0, 10);
-
-  // 你也可以改成更精准的关键词组合
-  const rssUrl =
-    "https://news.google.com/rss/search?q=" +
-    encodeURIComponent('("TikTok Shop" OR TikTok) (seller OR shipping OR policy OR ads)') +
-    "&hl=en-US&gl=US&ceid=US:en";
-
-  const rssText = await fetch(rssUrl, {
-    headers: { "user-agent": "aio-workdesk/1.0" }
-  }).then(r => r.text());
-
-  const items = parseRssItems(rssText).slice(0, 10);
-
-  const titles = items.map((it, i) => `${i + 1}. ${it.title}`).join("\n");
-  const prompt = `
-你是跨境电商团队的情报编辑。
-下面是今天抓取到的新闻标题列表（主要与 TikTok / TikTok Shop 卖家、物流、政策、广告相关）。
-请输出：
-1）用中文写 4-7 条“今日要点”，每条一句话，极度精炼，面向运营团队，可直接读懂。
-2）不要输出英文。
-3）不要输出“关键词/算法说明/免责声明”等多余信息。
-4）如果标题重复或意义不大，请合并或忽略。
-
-标题列表：
-${titles}
-`.trim();
-
-  const bullets = await openaiSummarize(env, prompt);
-
-  return {
-    date,
-    bullets,
-    sources: items.map(it => ({
-      title: it.title,
-      url: it.link,
-      source: it.source || "",
-      published: it.pubDate || ""
-    }))
-  };
-}
-
-/**
- * OpenAI Responses API（服务端调用）
- * 说明：务必把 OPENAI_API_KEY 配成 Worker 环境变量
- */
-async function openaiSummarize(env, prompt) {
-  if (!env.OPENAI_API_KEY) {
-    return ["未配置 OPENAI_API_KEY（请在 Cloudflare Worker 的环境变量里添加）"];
-  }
-
-  const res = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      "authorization": `Bearer ${env.OPENAI_API_KEY}`,
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
-      model: env.OPENAI_MODEL || "gpt-5.2",
-      input: prompt
-    })
-  });
-
-  if (!res.ok) {
-    const t = await res.text();
-    return [`AI 总结失败：HTTP ${res.status}`, t.slice(0, 200)];
-  }
-
-  const data = await res.json();
-  // Responses API 输出字段结构可能包含 output_text
-  const text = (data.output_text || "").trim();
-  if (!text) return ["AI 未返回内容"];
-
-  // 允许模型返回用换行分点：我们统一成 bullets 数组
-  const lines = text
-    .split(/\n+/)
-    .map(s => s.replace(/^\s*[-•\d.、]+\s*/, "").trim())
-    .filter(Boolean);
-
-  // 最多取 7 条
-  return lines.slice(0, 7);
-}
-
-/**
- * 超轻量 RSS 解析（足够用）
- */
-function parseRssItems(xml) {
-  const items = [];
-  const blocks = xml.split("<item>").slice(1);
-  for (const b of blocks) {
-    const seg = b.split("</item>")[0] || "";
-    const title = pickTag(seg, "title");
-    const link = pickTag(seg, "link");
-    const pubDate = pickTag(seg, "pubDate");
-    // Google News 的 source 标签有时是 <source url="...">xxx</source>
-    const source = (seg.match(/<source[^>]*>([\s\S]*?)<\/source>/i)?.[1] || "").trim();
-    if (title && link) {
-      items.push({ title: decodeHtml(title), link: decodeHtml(link), pubDate: decodeHtml(pubDate), source: decodeHtml(source) });
+    .wrap{
+      width: 100%;
+      max-width: calc(var(--contentMax) + 40px);
     }
-  }
-  return items;
-}
 
-function pickTag(s, tag) {
-  const m = s.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"));
-  return m ? m[1].trim() : "";
-}
+    /* Header */
+    .hero{
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      padding: 22px 24px 18px;
+      margin-bottom: 14px;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(500px 220px at 18% 30%, rgba(20,190,255,.18), transparent 60%),
+        radial-gradient(520px 260px at 80% 20%, rgba(124,92,255,.22), transparent 60%);
+      filter: blur(8px);
+      pointer-events:none;
+    }
+    .hero > *{position:relative}
+    .titleRow{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap: 14px;
+      flex-wrap:wrap;
+    }
+    .h1{
+      display:flex; align-items:center; gap:10px;
+      font-size: 40px;
+      font-weight: 840;
+      letter-spacing: .2px;
+      margin:0;
+    }
+    .sub{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 560;
+    }
 
-function decodeHtml(str) {
-  return str
-    .replace(/<!\[CDATA\[(.*?)\]\]>/g, "$1")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-}
+    .clocks{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    @media (max-width: 1080px){
+      .clocks{grid-template-columns: repeat(2, minmax(160px, 1fr));}
+    }
+    .chip{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 10px 25px rgba(0,0,0,.18) inset;
+      min-width:0;
+    }
+    .chip .flag{width:18px; text-align:center}
+    .chip .name{color:var(--muted); font-weight:700; font-size:13px}
+    .chip .time{
+      margin-left:auto;
+      font-variant-numeric: tabular-nums;
+      font-weight: 850;
+      letter-spacing:.6px;
+      font-size: 14px;
+      white-space:nowrap;
+    }
+
+    /* Section titles */
+    .secTitle{
+      display:flex; align-items:center; gap:10px;
+      margin: 18px 0 10px;
+      font-size: 18px;
+      font-weight: 820;
+      letter-spacing: .2px;
+    }
+    .secTitle .emoji{opacity:.95}
+
+    /* Cards grid: responsive columns (fix “挤出去”问题) */
+    .grid{
+      display:grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items:stretch;
+    }
+
+    .card{
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(16px);
+      overflow:hidden;
+      position:relative;
+      min-width:0;
+    }
+    .cardHeader{
+      display:flex; align-items:center; gap:10px;
+      padding: 14px 14px 10px;
+      font-weight: 820;
+      letter-spacing:.2px;
+    }
+    .cardHeader .ico{
+      width:22px;height:22px;border-radius:9px;
+      display:grid;place-items:center;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      font-size: 12px;
+      flex:0 0 22px;
+    }
+    .cardBody{padding: 0 12px 12px;}
+    .links{
+      display:flex; flex-direction:column; gap: 8px;
+    }
+    .link{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      text-decoration:none;
+      color: var(--txt);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      transition: .18s ease;
+      min-width:0;
+    }
+    .link:hover{background: rgba(255,255,255,.06); transform: translateY(-1px);}
+    .link .txt{font-weight: 650; font-size: 14px; min-width:0;}
+    .link .arr{
+      margin-left:auto;
+      opacity:.8;
+      font-size: 14px;
+      flex: 0 0 auto;
+    }
+
+    /* TikTok Portal */
+    .portalGrid{
+      display:grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      align-items:stretch;
+    }
+    .portalCol{
+      padding: 12px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(16px);
+      min-width:0;
+    }
+    .portalTop{
+      display:flex; align-items:center; gap:10px;
+      padding: 6px 4px 10px;
+      font-weight: 850;
+      letter-spacing:.2px;
+    }
+    .portalTop .flag{width:22px;text-align:center}
+    .portalTop .region{font-size:15px}
+    .portalGroupTitle{
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
+      margin: 6px 4px 10px;
+    }
+    .acctList{display:flex; flex-direction:column; gap: 8px}
+    .acctRow{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.08);
+      min-width:0;
+    }
+    .badge{
+      flex:0 0 auto;
+      font-size: 12px;
+      font-weight: 850;
+      color: rgba(255,255,255,.92);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 5px 8px;
+      border-radius: 999px;
+    }
+    .handle{
+      font-weight: 850;
+      font-size: 14px;
+      letter-spacing:.2px;
+      white-space: nowrap; /* 不换行 */
+      overflow: visible;   /* 不截断 */
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .go{
+      margin-left:auto;
+      flex:0 0 auto;
+      width:34px;height:34px;border-radius: 12px;
+      display:grid;place-items:center;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      cursor:pointer;
+      transition:.18s ease;
+      user-select:none;
+    }
+    .go:hover{transform: translateY(-1px); background: rgba(255,255,255,.07)}
+    .go span{opacity:.85; font-size:14px}
+
+    /* VPN + Apple row */
+    .row2{
+      display:grid;
+      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+      align-items:stretch;
+    }
+    @media (max-width: 980px){
+      .row2{grid-template-columns: 1fr;}
+    }
+
+    .qrGrid{
+      display:grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      padding: 12px;
+    }
+    .qrCard{
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(16px);
+      padding: 12px;
+      min-width:0;
+    }
+    .qrTop{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; margin-bottom: 8px;
+    }
+    .qrTop .name{font-weight: 900}
+    .pill{
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .qrWrap{
+      background: rgba(255,255,255,.96);
+      border-radius: 16px;
+      padding: 10px;
+      display:grid; place-items:center;
+      border: 1px solid rgba(0,0,0,.10);
+    }
+    .qrWrap img{width: 100%; height:auto; max-width: 200px; border-radius: 10px}
+    .small{color: var(--muted2); font-size: 12px; margin-top:8px}
+
+    /* Apple IDs */
+    .appleBox{
+      padding: 12px;
+    }
+    .appleHint{
+      color: var(--muted2);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    .appleList{
+      display:flex; flex-direction:column; gap: 10px;
+    }
+    .appleItem{
+      padding: 12px;
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      min-width:0;
+    }
+    .appleHead{
+      display:flex; align-items:center; gap:10px;
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+    .kv{
+      display:grid;
+      grid-template-columns: 72px 1fr 70px;
+      gap: 10px;
+      align-items:center;
+      margin-top: 8px;
+    }
+    .k{color: var(--muted); font-weight: 850; font-size: 12px}
+    .v{
+      font-weight: 850;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn{
+      justify-self:end;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--txt);
+      font-weight: 850;
+      font-size: 12px;
+      cursor:pointer;
+      user-select:none;
+      transition:.18s ease;
+    }
+    .btn:hover{background: rgba(255,255,255,.07); transform: translateY(-1px);}
+
+    /* News */
+    .newsCard{padding: 12px;}
+    .newsTop{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 10px;
+      padding: 6px 4px 10px;
+    }
+    .newsTop .left{display:flex; align-items:center; gap:10px}
+    .newsTop .stamp{color: var(--muted); font-weight: 850; font-size: 12px}
+    .newsBullets{
+      margin: 8px 6px 10px;
+      display:flex; flex-direction:column; gap: 8px;
+    }
+    .bullet{
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.08);
+      color: rgba(255,255,255,.90);
+      font-weight: 650;
+      line-height: 1.45;
+    }
+    details.sources{
+      margin: 10px 6px 6px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.08);
+      overflow:hidden;
+    }
+    details.sources summary{
+      list-style:none;
+      cursor:pointer;
+      padding: 12px 12px;
+      font-weight: 900;
+      color: var(--txt);
+      user-select:none;
+      display:flex; align-items:center; gap:10px;
+    }
+    details.sources summary::-webkit-details-marker{display:none}
+    .srcList{padding: 0 12px 12px; display:flex; flex-direction:column; gap: 8px}
+    .src{
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.08);
+      text-decoration:none;
+      color: var(--txt);
+      display:flex; flex-direction:column; gap: 4px;
+    }
+    .src .t{font-weight: 800}
+    .src .m{color: var(--muted2); font-size: 12px}
+
+    /* Floating Todo */
+    .fab{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(14px);
+      cursor:pointer;
+      user-select:none;
+      z-index: 50;
+    }
+    .fab .sq{
+      width:34px;height:34px;border-radius: 14px;
+      display:grid;place-items:center;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .fab .t{
+      display:flex; flex-direction:column;
+      line-height:1.05;
+    }
+    .fab .t .s{font-size:12px;color:var(--muted); font-weight: 800}
+    .fab .t .b{font-size:14px;font-weight: 900}
+    .modalMask{
+      position: fixed; inset:0;
+      background: rgba(0,0,0,.42);
+      backdrop-filter: blur(6px);
+      display:none;
+      z-index: 60;
+    }
+    .modal{
+      position: fixed;
+      right: 18px;
+      bottom: 84px;
+      width: 360px;
+      max-width: calc(100vw - 36px);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      display:none;
+      z-index: 70;
+      overflow:hidden;
+    }
+    .modalTop{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .modalTop .ttl{font-weight: 950; letter-spacing:.2px}
+    .modalTop .x{
+      width:34px;height:34px;border-radius: 12px;
+      display:grid;place-items:center;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      cursor:pointer;
+      user-select:none;
+    }
+    .modalBody{padding: 12px;}
+    .todoRow{
+      display:flex; gap: 8px;
+    }
+    .todoInput{
+      flex:1 1 auto;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: var(--txt);
+      padding: 10px 12px;
+      outline:none;
+      font-weight: 750;
+    }
+    .todoInput::placeholder{color: rgba(255,255,255,.40)}
+    .todoAdd{
+      flex:0 0 auto;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--txt);
+      padding: 10px 12px;
+      font-weight: 900;
+      cursor:pointer;
+    }
+    .todoList{margin-top: 10px; display:flex; flex-direction:column; gap:8px;}
+    .todoItem{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.08);
+      min-width:0;
+    }
+    .todoItem input{width:16px;height:16px}
+    .todoItem .text{
+      font-weight: 750;
+      color: rgba(255,255,255,.88);
+      flex: 1 1 auto;
+      min-width:0;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .todoItem.done .text{
+      text-decoration: line-through;
+      color: rgba(255,255,255,.45);
+    }
+    .todoItem .del{
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--txt);
+      font-weight: 900;
+      font-size: 12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .todoFooter{
+      margin-top: 10px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+      color: var(--muted2);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .todoClear{
+      cursor:pointer;
+      user-select:none;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--txt);
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    /* Helpers */
+    .spacer{height: 18px;}
+    .anchor{scroll-margin-top: 18px;}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <!-- Left Nav (compact) -->
+    <aside class="nav" aria-label="导航">
+      <div class="brand">
+        <div class="logo"><span>🚀</span></div>
+        <div class="name">All in one</div>
+      </div>
+      <ul>
+        <li><a class="navLink active" href="#sec-links" data-target="sec-links"><span class="icon">📌</span><span class="label">常用网站</span></a></li>
+        <li><a class="navLink" href="#sec-portal" data-target="sec-portal"><span class="icon">📜</span><span class="label">TikTok账号传送门</span></a></li>
+        <li><a class="navLink" href="#sec-vpn" data-target="sec-vpn"><span class="icon">🪜</span><span class="label">小火箭节点</span></a></li>
+        <li><a class="navLink" href="#sec-apple" data-target="sec-apple"><span class="icon">🍎</span><span class="label">Apple ID（各区）</span></a></li>
+        <li><a class="navLink" href="#sec-news" data-target="sec-news"><span class="icon">💡</span><span class="label">最新资讯</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="wrap">
+        <!-- Header -->
+        <section class="hero">
+          <div class="titleRow">
+            <div>
+              <h1 class="h1">🚀 All in one 工作台</h1>
+              <div class="sub">仅海外事业部内部使用</div>
+            </div>
+          </div>
+
+          <div class="clocks" id="clockRow">
+            <div class="chip"><span class="flag">🇺🇸</span><span class="name">美国</span><span class="time" id="tLA">--:--:--</span></div>
+            <div class="chip"><span class="flag">🇸🇬</span><span class="name">新加坡</span><span class="time" id="tSG">--:--:--</span></div>
+            <div class="chip"><span class="flag">🇻🇳</span><span class="name">越南</span><span class="time" id="tVN">--:--:--</span></div>
+            <div class="chip"><span class="flag">🇲🇾</span><span class="name">马来西亚</span><span class="time" id="tMY">--:--:--</span></div>
+          </div>
+        </section>
+
+        <!-- 常用网站 -->
+        <section id="sec-links" class="anchor">
+          <div class="secTitle"><span class="emoji">📌</span> 常用网站</div>
+          <div class="grid">
+            <div class="card">
+              <div class="cardHeader"><span class="ico">📱</span> TikTok运营入口</div>
+              <div class="cardBody">
+                <div class="links">
+                  <a class="link" href="https://seller.tiktokshopglobalselling.com/account/login" target="_blank" rel="noopener"><span class="txt">跨境店后台</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://seller-vn.tiktok.com/account/login" target="_blank" rel="noopener"><span class="txt">越南本土店后台</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://business.tiktok.com/zh" target="_blank" rel="noopener"><span class="txt">商务中心后台</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://ads.tiktok.com/" target="_blank" rel="noopener"><span class="txt">广告户后台</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://www.tiktok.com/" target="_blank" rel="noopener"><span class="txt">TikTok（前台）</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://seller.tiktokglobalshop.com/university/home" target="_blank" rel="noopener"><span class="txt">卖家大学</span><span class="arr">↗</span></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="cardHeader"><span class="ico">🤖</span> AI工具</div>
+              <div class="cardBody">
+                <div class="links">
+                  <a class="link" href="https://chatgpt.com/" target="_blank" rel="noopener"><span class="txt">ChatGPT</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://gemini.google.com/app" target="_blank" rel="noopener"><span class="txt">Gemini</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://elevenlabs.io/app/sign-in?redirect=/app/speech-synthesis/text-to-speech" target="_blank" rel="noopener"><span class="txt">ElevenLabs</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://labs.google/fx/zh/tools/flow" target="_blank" rel="noopener"><span class="txt">Nano banana / Veo3</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://sora.chatgpt.com/explore" target="_blank" rel="noopener"><span class="txt">Sora2</span><span class="arr">↗</span></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="cardHeader"><span class="ico">📊</span> 数据分析</div>
+              <div class="cardBody">
+                <div class="links">
+                  <a class="link" href="https://www.fastmoss.com/zh" target="_blank" rel="noopener"><span class="txt">FastMoss</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://www.kalodata.com/login" target="_blank" rel="noopener"><span class="txt">Kalodata</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://echotik.live/board" target="_blank" rel="noopener"><span class="txt">EchoTik</span><span class="arr">↗</span></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="cardHeader"><span class="ico">🚚</span> 发货</div>
+              <div class="cardBody">
+                <div class="links">
+                  <a class="link" href="https://oms2.szestp.com/login" target="_blank" rel="noopener"><span class="txt">易速菲</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://wms.nxcang.com/#/login" target="_blank" rel="noopener"><span class="txt">南溪</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://www.erp321.com/login.aspx" target="_blank" rel="noopener"><span class="txt">聚水潭</span><span class="arr">↗</span></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="cardHeader"><span class="ico">🧰</span> 其他常用</div>
+              <div class="cardBody">
+                <div class="links">
+                  <a class="link" href="https://translate.google.com/?hl=zh-cn" target="_blank" rel="noopener"><span class="txt">Google翻译</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://wise.com/zh-cn/currency-converter/" target="_blank" rel="noopener"><span class="txt">汇率计算</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://sucaiwang.zhishangsoft.com/#/login?redirect=%2Fhome" target="_blank" rel="noopener"><span class="txt">云视频管家</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://www.henghengmao.net/en" target="_blank" rel="noopener"><span class="txt">视频去水印批量下载</span><span class="arr">↗</span></a>
+                  <a class="link" href="https://nmqzm.199lab.com/" target="_blank" rel="noopener"><span class="txt">视频去字幕</span><span class="arr">↗</span></a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- TikTok账号传送门 -->
+        <section id="sec-portal" class="anchor">
+          <div class="secTitle"><span class="emoji">📜</span> TikTok账号传送门</div>
+
+          <div class="portalGrid">
+            <!-- US -->
+            <div class="portalCol">
+              <div class="portalTop"><span class="flag">🇺🇸</span><span class="region">美国</span></div>
+
+              <div class="portalGroupTitle">自营账号</div>
+              <div class="acctList">
+                <div class="acctRow">
+                  <span class="badge">官号</span>
+                  <span class="handle">@youpure_official</span>
+                  <div class="go" data-open="https://www.tiktok.com/@youpure_official" title="打开"><span>↗</span></div>
+                </div>
+                <div class="acctRow">
+                  <span class="badge">渠道号</span>
+                  <span class="handle">@alice.love.u0</span>
+                  <div class="go" data-open="https://www.tiktok.com/@alice.love.u0" title="打开"><span>↗</span></div>
+                </div>
+                <div class="acctRow">
+                  <span class="badge">橱窗号</span>
+                  <span class="handle">@user210518057249868</span>
+                  <div class="go" data-open="https://www.tiktok.com/@user210518057249868" title="打开"><span>↗</span></div>
+                </div>
+                <div class="acctRow">
+                  <span class="badge">报白号</span>
+                  <span class="handle">@hnckuyd2m0</span>
+                  <div class="go" data-open="https://www.tiktok.com/@hnckuyd2m0" title="打开"><span>↗</span></div>
+                </div>
+                <div class="acctRow">
+                  <span class="badge">报白号</span>
+                  <span class="handle">@smqnfajfm6</span>
+                  <div class="go" data-open="https://www.tiktok.com/@smqnfajfm6" title="打开"><span>↗</span></div>
+                </div>
+              </div>
+
+              <div class="portalGroupTitle" style="margin-top:12px;">达人账号</div>
+              <div class="small">（待补充）</div>
+            </div>
+
+            <!-- SG -->
+            <div class="portalCol">
+              <div class="portalTop"><span class="flag">🇸🇬</span><span class="region">新加坡</span></div>
+              <div class="portalGroupTitle">自营账号</div>
+              <div class="small">（待补充）</div>
+              <div class="portalGroupTitle" style="margin-top:12px;">达人账号</div>
+              <div class="small">（待补充）</div>
+            </div>
+
+            <!-- VN -->
+            <div class="portalCol">
+              <div class="portalTop"><span class="flag">🇻🇳</span><span class="region">越南</span></div>
+              <div class="portalGroupTitle">自营账号</div>
+              <div class="small">（待补充）</div>
+              <div class="portalGroupTitle" style="margin-top:12px;">达人账号</div>
+              <div class="small">（待补充）</div>
+            </div>
+
+            <!-- MY -->
+            <div class="portalCol">
+              <div class="portalTop"><span class="flag">🇲🇾</span><span class="region">马来西亚</span></div>
+              <div class="portalGroupTitle">自营账号</div>
+              <div class="small">（待补充）</div>
+              <div class="portalGroupTitle" style="margin-top:12px;">达人账号</div>
+              <div class="small">（待补充）</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 小火箭 + Apple ID（各占一排更舒服：这里做成同一行两栏，在窄屏自动换行） -->
+        <section id="sec-vpn" class="anchor">
+          <div class="secTitle"><span class="emoji">🪜</span> 小火箭节点</div>
+
+          <div class="row2">
+            <!-- VPN -->
+            <div class="card">
+              <div class="cardHeader"><span class="ico">🪜</span> 小火箭节点</div>
+              <div class="qrGrid">
+                <div class="qrCard">
+                  <div class="qrTop">
+                    <div class="name">新加坡</div>
+                    <div class="pill">到期：2026-02-16 · <span id="ddSG">--</span></div>
+                  </div>
+                  <div class="qrWrap"><img src="新加坡.png" alt="新加坡节点二维码" /></div>
+                </div>
+
+                <div class="qrCard">
+                  <div class="qrTop">
+                    <div class="name">美国1</div>
+                    <div class="pill">到期：2026-02-28 · <span id="ddUS1">--</span></div>
+                  </div>
+                  <div class="qrWrap"><img src="美国1.png" alt="美国1节点二维码" /></div>
+                </div>
+
+                <div class="qrCard">
+                  <div class="qrTop">
+                    <div class="name">美国2</div>
+                    <div class="pill">到期：2026-02-28 · <span id="ddUS2">--</span></div>
+                  </div>
+                  <div class="qrWrap"><img src="美国2.png" alt="美国2节点二维码" /></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Apple -->
+            <div class="card" id="sec-apple">
+              <div class="cardHeader"><span class="ico">🍎</span> Apple ID（各区）</div>
+              <div class="appleBox">
+                <div class="appleList">
+
+                  <div class="appleItem">
+                    <div class="appleHead">🇺🇸 美国（小火箭）</div>
+                    <div class="kv">
+                      <div class="k">账号</div>
+                      <div class="v" id="apple_us_id">leichisha815772@hotmail.com</div>
+                      <div class="btn" data-copy="#apple_us_id">复制</div>
+                    </div>
+                    <div class="kv">
+                      <div class="k">密码</div>
+                      <div class="v" id="apple_us_pw">Zx668844</div>
+                      <div class="btn" data-copy="#apple_us_pw">复制</div>
+                    </div>
+                  </div>
+
+                  <div class="appleItem">
+                    <div class="appleHead">🇸🇬 新加坡</div>
+                    <div class="kv">
+                      <div class="k">账号</div>
+                      <div class="v" id="apple_sg_id">csgdj83297@hotmail.com</div>
+                      <div class="btn" data-copy="#apple_sg_id">复制</div>
+                    </div>
+                    <div class="kv">
+                      <div class="k">密码</div>
+                      <div class="v" id="apple_sg_pw">Zx668844</div>
+                      <div class="btn" data-copy="#apple_sg_pw">复制</div>
+                    </div>
+                  </div>
+
+                  <div class="appleItem">
+                    <div class="appleHead">🇻🇳 越南</div>
+                    <div class="kv">
+                      <div class="k">账号</div>
+                      <div class="v" id="apple_vn_id">ankil90770@hotmail.com</div>
+                      <div class="btn" data-copy="#apple_vn_id">复制</div>
+                    </div>
+                    <div class="kv">
+                      <div class="k">密码</div>
+                      <div class="v" id="apple_vn_pw">Zx668844</div>
+                      <div class="btn" data-copy="#apple_vn_pw">复制</div>
+                    </div>
+                  </div>
+
+                  <div class="appleItem">
+                    <div class="appleHead">🇲🇾 马来西亚</div>
+                    <div class="kv">
+                      <div class="k">账号</div>
+                      <div class="v" id="apple_my_id">turne.kirby21@meantodeal.com</div>
+                      <div class="btn" data-copy="#apple_my_id">复制</div>
+                    </div>
+                    <div class="kv">
+                      <div class="k">密码</div>
+                      <div class="v" id="apple_my_pw">MHtQ2288</div>
+                      <div class="btn" data-copy="#apple_my_pw">复制</div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="appleHint">提示：在 Apple Store 里登陆，请勿在设置里登陆。</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 最新资讯 -->
+        <section id="sec-news" class="anchor">
+          <div class="secTitle"><span class="emoji">💡</span> 最新资讯</div>
+          <div class="card">
+            <div class="cardHeader"><span class="ico">💡</span> 今日 TikTok 要点（AI 提炼）</div>
+            <div class="newsCard">
+              <div class="newsTop">
+                <div class="left">
+                  <span class="stamp" id="newsStamp">正在加载…</span>
+                </div>
+                <div>
+                  <button class="btn" id="newsRefresh">刷新</button>
+                </div>
+              </div>
+
+              <div class="newsBullets" id="newsBullets">
+                <div class="bullet">正在加载…</div>
+              </div>
+
+              <details class="sources" id="newsSourcesWrap">
+                <summary>信息来源</summary>
+                <div class="srcList" id="newsSources"></div>
+              </details>
+
+              <div class="small" id="newsTip"></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="spacer"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Floating ToDo -->
+  <div class="fab" id="todoFab" title="To do List">
+    <div class="sq">📝</div>
+    <div class="t">
+      <div class="s">Quick</div>
+      <div class="b">To do</div>
+    </div>
+  </div>
+
+  <div class="modalMask" id="todoMask"></div>
+  <div class="modal" id="todoModal" role="dialog" aria-modal="true" aria-label="To do List">
+    <div class="modalTop">
+      <div class="ttl">✅ To do List</div>
+      <div class="x" id="todoClose" title="关闭">✕</div>
+    </div>
+    <div class="modalBody">
+      <div class="todoRow">
+        <input class="todoInput" id="todoInput" placeholder="输入待办事项，然后点击创建" />
+        <button class="todoAdd" id="todoAddBtn">创建</button>
+      </div>
+
+      <div class="todoList" id="todoList"></div>
+
+      <div class="todoFooter">
+        <div id="todoCount">0 items</div>
+        <div class="todoClear" id="todoClearBtn">清除已完成</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /********************
+     * 0) Config
+     ********************/
+    // 你的 Cloudflare Worker 地址（后面你部署好后，把它替换成真实 URL）
+    // 例如：https://aio-news.yourname.workers.dev/news
+    const NEWS_API_URL = ""; // <-- 这里必填
+
+    /********************
+     * 1) Clocks (LA / SG / VN / MY)
+     ********************/
+    function fmtTime(tz){
+      return new Intl.DateTimeFormat('zh-CN', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false, timeZone: tz
+      }).format(new Date());
+    }
+    function tickClocks(){
+      // 美国 = 洛杉矶时间
+      document.getElementById('tLA').textContent = fmtTime('America/Los_Angeles');
+      document.getElementById('tSG').textContent = fmtTime('Asia/Singapore');
+      document.getElementById('tVN').textContent = fmtTime('Asia/Ho_Chi_Minh');
+      document.getElementById('tMY').textContent = fmtTime('Asia/Kuala_Lumpur');
+    }
+    tickClocks();
+    setInterval(tickClocks, 1000);
+
+    /********************
+     * 2) Countdown pills
+     ********************/
+    function daysLeft(dateStr){
+      const end = new Date(dateStr + "T23:59:59");
+      const now = new Date();
+      const ms = end - now;
+      const d = Math.ceil(ms / (1000*60*60*24));
+      return Math.max(d, 0);
+    }
+    function tickCountdown(){
+      document.getElementById('ddSG').textContent = `剩余 ${daysLeft("2026-02-16")} 天`;
+      document.getElementById('ddUS1').textContent = `剩余 ${daysLeft("2026-02-28")} 天`;
+      document.getElementById('ddUS2').textContent = `剩余 ${daysLeft("2026-02-28")} 天`;
+    }
+    tickCountdown();
+    setInterval(tickCountdown, 60*1000);
+
+    /********************
+     * 3) Sidebar active highlight (stable)
+     ********************/
+    const navLinks = Array.from(document.querySelectorAll('.navLink'));
+    function setActive(id){
+      navLinks.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+    }
+    // Click smooth scroll
+    navLinks.forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        // allow default anchor
+        const id = a.dataset.target;
+        const el = document.getElementById(id);
+        if(el){
+          e.preventDefault();
+          el.scrollIntoView({behavior:'smooth', block:'start'});
+          history.replaceState(null, '', '#' + id);
+          setActive(id);
+        }
+      });
+    });
+    // Observer: choose section most visible
+    const sectionIds = ["sec-links","sec-portal","sec-vpn","sec-news"];
+    const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+    const io = new IntersectionObserver((entries)=>{
+      // pick entry with max intersection ratio
+      let best = null;
+      for(const ent of entries){
+        if(!ent.isIntersecting) continue;
+        if(!best || ent.intersectionRatio > best.intersectionRatio){
+          best = ent;
+        }
+      }
+      if(best && best.target && best.target.id){
+        setActive(best.target.id);
+      }
+    }, {
+      root: null,
+      threshold: [0.12, 0.2, 0.35, 0.5, 0.65],
+      rootMargin: "-20% 0px -55% 0px" // 更贴近“当前区域在上半屏”的感觉
+    });
+    sections.forEach(s=>io.observe(s));
+
+    /********************
+     * 4) TikTok portal open
+     ********************/
+    document.querySelectorAll('.go[data-open]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const url = btn.getAttribute('data-open');
+        if(url) window.open(url, '_blank', 'noopener');
+      });
+    });
+
+    /********************
+     * 5) Copy helper (Apple IDs)
+     ********************/
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+    }
+    document.querySelectorAll('[data-copy]').forEach(b=>{
+      b.addEventListener('click', async ()=>{
+        const sel = b.getAttribute('data-copy');
+        const el = document.querySelector(sel);
+        if(!el) return;
+        await copyText(el.textContent.trim());
+        const old = b.textContent;
+        b.textContent = "已复制";
+        setTimeout(()=> b.textContent = old, 900);
+      });
+    });
+
+    /********************
+     * 6) ToDo (localStorage, per-browser independent)
+     ********************/
+    const TODO_KEY = "aio_todos_v1";
+    const fab = document.getElementById('todoFab');
+    const mask = document.getElementById('todoMask');
+    const modal = document.getElementById('todoModal');
+    const closeBtn = document.getElementById('todoClose');
+
+    const input = document.getElementById('todoInput');
+    const addBtn = document.getElementById('todoAddBtn');
+    const listEl = document.getElementById('todoList');
+    const countEl = document.getElementById('todoCount');
+    const clearBtn = document.getElementById('todoClearBtn');
+
+    function loadTodos(){
+      try{
+        const raw = localStorage.getItem(TODO_KEY);
+        if(!raw) return [];
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      }catch(e){ return []; }
+    }
+    function saveTodos(todos){
+      localStorage.setItem(TODO_KEY, JSON.stringify(todos));
+    }
+    function renderTodos(){
+      const todos = loadTodos();
+      listEl.innerHTML = "";
+
+      if(todos.length === 0){
+        const empty = document.createElement('div');
+        empty.className = "bullet";
+        empty.textContent = "暂无";
+        listEl.appendChild(empty);
+        countEl.textContent = "0 items";
+        return;
+      }
+
+      let left = 0;
+      todos.forEach((t, idx)=>{
+        if(!t.done) left++;
+
+        const row = document.createElement('div');
+        row.className = "todoItem" + (t.done ? " done" : "");
+
+        const cb = document.createElement('input');
+        cb.type = "checkbox";
+        cb.checked = !!t.done;
+        cb.addEventListener('change', ()=>{
+          const next = loadTodos();
+          next[idx].done = cb.checked;
+          saveTodos(next);
+          renderTodos();
+        });
+
+        const tx = document.createElement('div');
+        tx.className = "text";
+        tx.textContent = t.text;
+
+        const del = document.createElement('div');
+        del.className = "del";
+        del.textContent = "删除";
+        del.addEventListener('click', ()=>{
+          const next = loadTodos();
+          next.splice(idx, 1);
+          saveTodos(next);
+          renderTodos();
+        });
+
+        row.appendChild(cb);
+        row.appendChild(tx);
+        row.appendChild(del);
+        listEl.appendChild(row);
+      });
+
+      countEl.textContent = `${left} items`;
+    }
+
+    function addTodo(){
+      const v = (input.value || "").trim();
+      if(!v) return;
+      const todos = loadTodos();
+      todos.unshift({text: v, done:false, ts: Date.now()});
+      saveTodos(todos);
+      input.value = "";
+      renderTodos();
+    }
+    addBtn.addEventListener('click', addTodo);
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === "Enter") addTodo();
+    });
+    clearBtn.addEventListener('click', ()=>{
+      const todos = loadTodos();
+      const next = todos.filter(t => !t.done);
+      saveTodos(next);
+      renderTodos();
+    });
+
+    function openTodo(){
+      mask.style.display = "block";
+      modal.style.display = "block";
+      renderTodos();
+      setTimeout(()=> input.focus(), 50);
+    }
+    function closeTodo(){
+      mask.style.display = "none";
+      modal.style.display = "none";
+    }
+    fab.addEventListener('click', openTodo);
+    mask.addEventListener('click', closeTodo);
+    closeBtn.addEventListener('click', closeTodo);
+
+    /********************
+     * 7) News (AI summary via Worker)
+     ********************/
+    const stampEl = document.getElementById('newsStamp');
+    const bulletsEl = document.getElementById('newsBullets');
+    const sourcesEl = document.getElementById('newsSources');
+    const tipEl = document.getElementById('newsTip');
+    const refreshBtn = document.getElementById('newsRefresh');
+
+    function setLoading(){
+      stampEl.textContent = "正在加载…";
+      bulletsEl.innerHTML = `<div class="bullet">正在加载…</div>`;
+      sourcesEl.innerHTML = "";
+      tipEl.textContent = "";
+    }
+
+    function esc(s){
+      return String(s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    async function loadNews(){
+      setLoading();
+
+      if(!NEWS_API_URL){
+        stampEl.textContent = "未配置资讯接口";
+        bulletsEl.innerHTML = `<div class="bullet">请先在 index.html 顶部把 <b>NEWS_API_URL</b> 填成你部署后的 Cloudflare Worker 地址。</div>`;
+        tipEl.textContent = "（你选了真 AI 总结，所以需要 Worker 提供接口。）";
+        return;
+      }
+
+      try{
+        const res = await fetch(NEWS_API_URL, {cache: "no-store"});
+        if(!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+
+        const dt = data.date || "";
+        stampEl.textContent = dt ? `更新：${dt}` : "已更新";
+
+        const bullets = Array.isArray(data.bullets) ? data.bullets : [];
+        if(bullets.length === 0){
+          bulletsEl.innerHTML = `<div class="bullet">暂无要点</div>`;
+        }else{
+          bulletsEl.innerHTML = bullets.map(t => `<div class="bullet">${esc(t)}</div>`).join("");
+        }
+
+        const sources = Array.isArray(data.sources) ? data.sources : [];
+        sourcesEl.innerHTML = sources.map(s=>{
+          const title = esc(s.title || "来源");
+          const meta = esc((s.source ? s.source + " · " : "") + (s.published || ""));
+          const url = esc(s.url || "#");
+          return `<a class="src" href="${url}" target="_blank" rel="noopener">
+                    <div class="t">${title}</div>
+                    <div class="m">${meta}</div>
+                  </a>`;
+        }).join("");
+
+        tipEl.textContent = "";
+      }catch(err){
+        stampEl.textContent = "加载失败";
+        bulletsEl.innerHTML = `<div class="bullet">资讯加载失败：${esc(err.message || err)}</div>`;
+        tipEl.textContent = "请检查：1）Worker 是否已部署；2）NEWS_API_URL 是否正确；3）网络是否可访问。";
+      }
+    }
+    refreshBtn.addEventListener('click', loadNews);
+    loadNews();
+
+    /********************
+     * 8) Password gate (保留你之前的方式)
+     ********************/
+    // 如果你不想要密码弹窗，可以把下面这段注释掉
+    const PASSWORD = "YouPure2026";
+    const inputPwd = prompt("请输入工作台密码：");
+    if(inputPwd !== PASSWORD){
+      alert("密码错误，无权限访问。");
+      location.href="about:blank";
+    }
+  </script>
+</body>
+</html>

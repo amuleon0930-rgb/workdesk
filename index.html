@@ -10,15 +10,11 @@
   --bg0:#070A12;
   --bg1:#0B1220;
   --card: rgba(255,255,255,.06);
-  --card2: rgba(255,255,255,.08);
   --line: rgba(255,255,255,.10);
   --text:#EAF0FF;
   --muted: rgba(234,240,255,.72);
   --muted2: rgba(234,240,255,.55);
-  --link:#9CC2FF;
   --link2:#CFE1FF;
-  --accent:#6EE7FF;
-  --accent2:#7C5CFF;
   --shadow: 0 20px 60px rgba(0,0,0,.45);
   --shadow2: 0 10px 30px rgba(0,0,0,.35);
   --radius: 18px;
@@ -131,14 +127,6 @@ body:before{
   color: var(--text);
 }
 
-/* ✅ 主体两栏：左内容 + 右 To do List */
-.layout{
-  display:grid;
-  grid-template-columns: 1fr 340px;
-  gap: 16px;
-  align-items:start;
-}
-
 .section{
   margin-top: 22px;
 }
@@ -208,18 +196,7 @@ body:before{
   color: #ffffff;
 }
 
-.list{
-  font-size: 15px;
-  line-height: 1.9;
-  color: var(--muted);
-}
-
-/* 飞书文档：不那么宽（居中限宽） */
-.feishu-wrap{
-  max-width: 880px;
-  margin: 0 auto;
-}
-
+/* 飞书：保持宽版（不限制宽度） */
 .feishu a{
   background: rgba(124,92,255,.10);
 }
@@ -308,6 +285,12 @@ body:before{
 }
 
 /* 最新资讯 */
+.list{
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--muted);
+}
+
 .news-list{
   display:flex;
   flex-direction:column;
@@ -339,9 +322,138 @@ body:before{
   color: var(--muted2);
 }
 
-/* ✅ To do List */
+/* =========================
+   ✅ 悬浮 To do（方案一）
+   ========================= */
+.fab{
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  cursor:pointer;
+  user-select:none;
+  border: 1px solid rgba(110,231,255,.30);
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+  box-shadow: 0 18px 50px rgba(0,0,0,.45);
+  backdrop-filter: blur(10px);
+}
+
+.fab:hover{
+  box-shadow: 0 0 0 3px rgba(110,231,255,.12), 0 18px 50px rgba(0,0,0,.45);
+}
+
+.fab .icon{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(0,0,0,.18);
+  border: 1px solid rgba(255,255,255,.12);
+  font-size: 16px;
+}
+
+.fab .txt{
+  display:flex;
+  flex-direction:column;
+  line-height:1.1;
+}
+.fab .txt .t1{
+  font-size: 12px;
+  color: rgba(234,240,255,.60);
+}
+.fab .txt .t2{
+  font-size: 14px;
+  font-weight: 750;
+  color: rgba(234,240,255,.95);
+}
+
+/* overlay */
+.drawer-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0,0,0,.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+}
+
+/* drawer */
+.drawer{
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 320px; /* ✅ 你选的 A：偏窄 */
+  z-index: 70;
+  transform: translateX(100%);
+  transition: transform .22s ease;
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+  border-left: 1px solid rgba(255,255,255,.14);
+  box-shadow: -24px 0 60px rgba(0,0,0,.55);
+  backdrop-filter: blur(12px);
+  display:flex;
+  flex-direction:column;
+}
+
+.drawer-head{
+  padding: 16px 14px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+.drawer-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size: 16px;
+  font-weight: 800;
+  color: rgba(234,240,255,.95);
+}
+
+.drawer-close{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.18);
+  color: rgba(234,240,255,.85);
+  border-radius: 12px;
+  padding: 8px 10px;
+  cursor:pointer;
+  font-size: 12px;
+}
+.drawer-close:hover{
+  box-shadow: 0 0 0 3px rgba(255,255,255,.08);
+}
+
+.drawer-body{
+  padding: 12px 14px 16px;
+  overflow:auto;
+}
+
+/* To do inside drawer */
+.todo-card{
+  border-radius: var(--radius);
+  background: rgba(0,0,0,.16);
+  border: 1px solid rgba(255,255,255,.10);
+  padding: 14px;
+}
+
 .todo-card h3{
-  margin-bottom: 10px;
+  margin:0 0 10px;
+  font-size: 14px;
+  color: rgba(234,240,255,.90);
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
 .todo-input{
@@ -450,21 +562,31 @@ body:before{
   box-shadow: 0 0 0 3px rgba(255,255,255,.08);
 }
 
+/* open state */
+body.drawer-open .drawer-overlay{
+  opacity: 1;
+  pointer-events: auto;
+}
+body.drawer-open .drawer{
+  transform: translateX(0);
+}
+
 /* 响应式 */
 @media (max-width: 1200px){
   .grid-5{ grid-template-columns: repeat(3, minmax(240px, 1fr)); }
-  .layout{ grid-template-columns: 1fr 320px; }
 }
-@media (max-width: 980px){
-  .layout{ grid-template-columns: 1fr; }
+@media (max-width: 880px){
   .time-box{ grid-template-columns: repeat(2, minmax(180px, 1fr)); }
   .grid-5{ grid-template-columns: repeat(2, minmax(240px, 1fr)); }
   .nodes{ grid-template-columns: 1fr; }
+  .drawer{ width: 320px; }
 }
 @media (max-width: 520px){
   .title{ font-size: 28px; }
   .wrap{ padding: 18px 14px 30px; }
   .time-box{ grid-template-columns: 1fr; }
+  .drawer{ width: 92vw; }
+  .fab{ right: 12px; bottom: 12px; }
 }
 </style>
 </head>
@@ -485,165 +607,168 @@ body:before{
     </div>
   </div>
 
-  <!-- 主体两栏 -->
-  <div class="layout">
+  <!-- 常用网站 -->
+  <div class="section">
+    <h2>📌 常用网站</h2>
 
-    <!-- 左侧：原有内容 -->
-    <div class="main">
+    <div class="grid grid-5">
 
-      <!-- 常用网站 -->
-      <div class="section">
-        <h2>📌 常用网站</h2>
-
-        <div class="grid grid-5">
-
-          <div class="card">
-            <h3>📱 TikTok运营入口</h3>
-            <div class="links">
-              <a href="https://seller.tiktokshopglobalselling.com/account/login" target="_blank">跨境店后台</a>
-              <a href="https://business.tiktok.com/zh" target="_blank">商务中心后台</a>
-              <a href="https://ads.tiktok.com" target="_blank">广告户后台</a>
-              <a href="https://seller-vn.tiktok.com/account/login" target="_blank">越南本土店后台</a>
-              <a href="https://seller.tiktokglobalshop.com/university/home" target="_blank">卖家大学</a>
-              <a href="https://www.tiktok.com/" target="_blank">TikTok（前台）</a>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3>🤖 AI工具</h3>
-            <div class="links">
-              <a href="https://chatgpt.com/" target="_blank">ChatGPT</a>
-              <a href="https://gemini.google.com/app" target="_blank">Gemini</a>
-              <a href="https://elevenlabs.io/app/sign-in?redirect=/app/speech-synthesis/text-to-speech" target="_blank">ElevenLabs</a>
-              <a href="https://labs.google/fx/zh/tools/flow" target="_blank">Nano banana / Veo3</a>
-              <a href="https://sora.chatgpt.com/explore" target="_blank">Sora2</a>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3>📊 数据分析</h3>
-            <div class="links">
-              <a href="https://www.fastmoss.com/zh" target="_blank">FastMoss</a>
-              <a href="https://www.kalodata.com/login" target="_blank">Kalodata</a>
-              <a href="https://echotik.live/board" target="_blank">EchoTik</a>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3>🚚 发货</h3>
-            <div class="links">
-              <a href="https://oms2.szestp.com/login" target="_blank">易速菲</a>
-              <a href="https://wms.nxcang.com/#/login" target="_blank">南溪</a>
-              <a href="https://www.erp321.com/login.aspx" target="_blank">聚水潭</a>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3>🧰 其他常用</h3>
-            <div class="links">
-              <a href="https://translate.google.com/?hl=zh-cn" target="_blank">Google翻译</a>
-              <a href="https://wise.com/zh-cn/currency-converter/" target="_blank">汇率计算</a>
-              <a href="https://www.henghengmao.net/en" target="_blank">视频去水印批量下载</a>
-              <a href="https://nmqzm.199lab.com/" target="_blank">视频去字幕</a>
-            </div>
-          </div>
-
+      <div class="card">
+        <h3>📱 TikTok运营入口</h3>
+        <div class="links">
+          <a href="https://seller.tiktokshopglobalselling.com/account/login" target="_blank">跨境店后台</a>
+          <a href="https://business.tiktok.com/zh" target="_blank">商务中心后台</a>
+          <a href="https://ads.tiktok.com" target="_blank">广告户后台</a>
+          <a href="https://seller-vn.tiktok.com/account/login" target="_blank">越南本土店后台</a>
+          <a href="https://seller.tiktokglobalshop.com/university/home" target="_blank">卖家大学</a>
+          <a href="https://www.tiktok.com/" target="_blank">TikTok（前台）</a>
         </div>
       </div>
 
-      <!-- 飞书文档 -->
-      <div class="section">
-        <h2>📄 飞书文档</h2>
-        <div class="feishu-wrap">
-          <div class="card feishu">
-            <div class="links">
-              <a href="https://g52uj58vy1.feishu.cn/wiki/POSawCwD0ijpd1k5pKlcK11CnEf?from=from_copylink" target="_blank">跨境发货SOP</a>
-              <a href="https://g52uj58vy1.feishu.cn/wiki/HnHHwIPCgiO7FckjI6UcsfVvnEg?from=from_copylink" target="_blank">剪辑SOP</a>
-              <a href="https://g52uj58vy1.feishu.cn/wiki/XU7lw7EUdiwicWk4FI8ca5BEnLf?from=from_copylink" target="_blank">广告相关SOP</a>
-            </div>
-          </div>
+      <div class="card">
+        <h3>🤖 AI工具</h3>
+        <div class="links">
+          <a href="https://chatgpt.com/" target="_blank">ChatGPT</a>
+          <a href="https://gemini.google.com/app" target="_blank">Gemini</a>
+          <a href="https://elevenlabs.io/app/sign-in?redirect=/app/speech-synthesis/text-to-speech" target="_blank">ElevenLabs</a>
+          <a href="https://labs.google/fx/zh/tools/flow" target="_blank">Nano banana / Veo3</a>
+          <a href="https://sora.chatgpt.com/explore" target="_blank">Sora2</a>
         </div>
       </div>
 
-      <!-- 小火箭节点 -->
-      <div class="section">
-        <h2>🪜 小火箭节点</h2>
-
-        <div class="nodes">
-          <div class="node-card">
-            <div class="node-title">新加坡</div>
-            <div class="node-meta">
-              <span>到期时间：2026-02-16</span>
-              <span class="badge" id="badge-sg">计算中…</span>
-            </div>
-            <div class="qr">
-              <img src="新加坡.png" alt="新加坡二维码">
-            </div>
-          </div>
-
-          <div class="node-card">
-            <div class="node-title">美国1</div>
-            <div class="node-meta">
-              <span>到期时间：2026-02-28</span>
-              <span class="badge" id="badge-us1">计算中…</span>
-            </div>
-            <div class="qr">
-              <img src="美国1.png" alt="美国1二维码">
-            </div>
-          </div>
-
-          <div class="node-card">
-            <div class="node-title">美国2</div>
-            <div class="node-meta">
-              <span>到期时间：2026-02-28</span>
-              <span class="badge" id="badge-us2">计算中…</span>
-            </div>
-            <div class="qr">
-              <img src="美国2.png" alt="美国2二维码">
-            </div>
-          </div>
+      <div class="card">
+        <h3>📊 数据分析</h3>
+        <div class="links">
+          <a href="https://www.fastmoss.com/zh" target="_blank">FastMoss</a>
+          <a href="https://www.kalodata.com/login" target="_blank">Kalodata</a>
+          <a href="https://echotik.live/board" target="_blank">EchoTik</a>
         </div>
       </div>
 
-      <!-- 最新资讯 -->
-      <div class="section">
-        <h2>💡 最新资讯</h2>
-        <div class="card">
-          <div class="list" id="newsStatus">正在加载今日 TikTok 重要资讯...</div>
-          <div class="news-list" id="newsList" style="margin-top:12px;"></div>
-          <div class="list" id="newsHint" style="margin-top:12px; color: rgba(234,240,255,.55); font-size:13px;">
-            注：资讯来源为公开新闻聚合（Google News RSS）。如在国内网络无法加载，请使用可访问外网的网络环境。
-          </div>
+      <div class="card">
+        <h3>🚚 发货</h3>
+        <div class="links">
+          <a href="https://oms2.szestp.com/login" target="_blank">易速菲</a>
+          <a href="https://wms.nxcang.com/#/login" target="_blank">南溪</a>
+          <a href="https://www.erp321.com/login.aspx" target="_blank">聚水潭</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🧰 其他常用</h3>
+        <div class="links">
+          <a href="https://translate.google.com/?hl=zh-cn" target="_blank">Google翻译</a>
+          <a href="https://wise.com/zh-cn/currency-converter/" target="_blank">汇率计算</a>
+          <a href="https://www.henghengmao.net/en" target="_blank">视频去水印批量下载</a>
+          <a href="https://nmqzm.199lab.com/" target="_blank">视频去字幕</a>
         </div>
       </div>
 
     </div>
+  </div>
 
-    <!-- 右侧：To do List -->
-    <div class="side">
-      <div class="section" style="margin-top:0;">
-        <h2>✅ To do List</h2>
-        <div class="card todo-card">
-          <h3>📌 今日待办</h3>
+  <!-- 飞书文档（恢复宽版） -->
+  <div class="section">
+    <h2>📄 飞书文档</h2>
+    <div class="card feishu">
+      <div class="links">
+        <a href="https://g52uj58vy1.feishu.cn/wiki/POSawCwD0ijpd1k5pKlcK11CnEf?from=from_copylink" target="_blank">跨境发货SOP</a>
+        <a href="https://g52uj58vy1.feishu.cn/wiki/HnHHwIPCgiO7FckjI6UcsfVvnEg?from=from_copylink" target="_blank">剪辑SOP</a>
+        <a href="https://g52uj58vy1.feishu.cn/wiki/XU7lw7EUdiwicWk4FI8ca5BEnLf?from=from_copylink" target="_blank">广告相关SOP</a>
+      </div>
+    </div>
+  </div>
 
-          <div class="todo-input">
-            <input id="todoInput" placeholder="输入待办事项，然后点 Add" />
-            <button id="todoAddBtn">Add</button>
-          </div>
+  <!-- 小火箭节点 -->
+  <div class="section">
+    <h2>🪜 小火箭节点</h2>
 
-          <div class="todo-list" id="todoList"></div>
+    <div class="nodes">
+      <div class="node-card">
+        <div class="node-title">新加坡</div>
+        <div class="node-meta">
+          <span>到期时间：2026-02-16</span>
+          <span class="badge" id="badge-sg">计算中…</span>
+        </div>
+        <div class="qr">
+          <img src="新加坡.png" alt="新加坡二维码">
+        </div>
+      </div>
 
-          <div class="todo-footer">
-            <span id="todoCount">0 items</span>
-            <button class="todo-clear" id="todoClearBtn">清除已完成</button>
-          </div>
+      <div class="node-card">
+        <div class="node-title">美国1</div>
+        <div class="node-meta">
+          <span>到期时间：2026-02-28</span>
+          <span class="badge" id="badge-us1">计算中…</span>
+        </div>
+        <div class="qr">
+          <img src="美国1.png" alt="美国1二维码">
+        </div>
+      </div>
+
+      <div class="node-card">
+        <div class="node-title">美国2</div>
+        <div class="node-meta">
+          <span>到期时间：2026-02-28</span>
+          <span class="badge" id="badge-us2">计算中…</span>
+        </div>
+        <div class="qr">
+          <img src="美国2.png" alt="美国2二维码">
         </div>
       </div>
     </div>
+  </div>
 
+  <!-- 最新资讯 -->
+  <div class="section">
+    <h2>💡 最新资讯</h2>
+    <div class="card">
+      <div class="list" id="newsStatus">正在加载今日 TikTok 重要资讯...</div>
+      <div class="news-list" id="newsList" style="margin-top:12px;"></div>
+      <div class="list" id="newsHint" style="margin-top:12px; color: rgba(234,240,255,.55); font-size:13px;">
+        注：资讯来源为公开新闻聚合（Google News RSS）。如在国内网络无法加载，请使用可访问外网的网络环境。
+      </div>
+    </div>
   </div>
 
 </div>
+
+<!-- ✅ 悬浮按钮（右下角 A） -->
+<div class="fab" id="todoFab" aria-label="To do List">
+  <div class="icon">📝</div>
+  <div class="txt">
+    <div class="t1">Quick</div>
+    <div class="t2">To do</div>
+  </div>
+</div>
+
+<!-- ✅ Drawer -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+
+<aside class="drawer" id="todoDrawer" aria-label="To do Drawer">
+  <div class="drawer-head">
+    <div class="drawer-title">✅ To do List</div>
+    <button class="drawer-close" id="drawerCloseBtn">关闭</button>
+  </div>
+
+  <div class="drawer-body">
+    <div class="todo-card">
+      <h3>📌 今日待办</h3>
+
+      <div class="todo-input">
+        <input id="todoInput" placeholder="输入待办事项，然后点 Add" />
+        <button id="todoAddBtn">Add</button>
+      </div>
+
+      <div class="todo-list" id="todoList"></div>
+
+      <div class="todo-footer">
+        <span id="todoCount">0 items</span>
+        <button class="todo-clear" id="todoClearBtn">清除已完成</button>
+      </div>
+    </div>
+  </div>
+</aside>
 
 <!-- 时间脚本 -->
 <script>
@@ -748,6 +873,40 @@ async function loadNews(){
 loadNews();
 </script>
 
+<!-- ✅ Drawer 开关：记住上次状态（B） -->
+<script>
+const DRAWER_KEY = "aio_drawer_open_v1";
+
+function setDrawer(open){
+  document.body.classList.toggle("drawer-open", open);
+  localStorage.setItem(DRAWER_KEY, open ? "1" : "0");
+}
+
+function getDrawer(){
+  return localStorage.getItem(DRAWER_KEY) === "1";
+}
+
+document.getElementById("todoFab").addEventListener("click", ()=>{
+  setDrawer(true);
+});
+
+document.getElementById("drawerCloseBtn").addEventListener("click", ()=>{
+  setDrawer(false);
+});
+
+document.getElementById("drawerOverlay").addEventListener("click", ()=>{
+  setDrawer(false);
+});
+
+// ESC 关闭
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape") setDrawer(false);
+});
+
+// 初始化：按上次状态打开/关闭（B）
+setDrawer(getDrawer());
+</script>
+
 <!-- To do List（本地保存） -->
 <script>
 const TODO_KEY = "aio_todos_v1";
@@ -763,6 +922,12 @@ function loadTodos(){
 
 function saveTodos(todos){
   localStorage.setItem(TODO_KEY, JSON.stringify(todos));
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[s]));
 }
 
 function renderTodos(){
@@ -786,12 +951,6 @@ function renderTodos(){
 
   const left = todos.filter(t => !t.done).length;
   count.textContent = `${left} items left`;
-}
-
-function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g, s => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[s]));
 }
 
 function addTodo(){

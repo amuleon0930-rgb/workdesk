@@ -1,1287 +1,160 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>All in one 工作台</title>
-
-<style>
-:root{
-  --bg0:#070A12;
-  --bg1:#0B1220;
-  --text:#EAF0FF;
-  --muted: rgba(234,240,255,.72);
-  --muted2: rgba(234,240,255,.55);
-  --link2:#CFE1FF;
-  --shadow: 0 20px 60px rgba(0,0,0,.45);
-  --shadow2: 0 10px 30px rgba(0,0,0,.35);
-  --radius: 18px;
-  --navw: 240px;
-}
-
-*{box-sizing:border-box;}
-html,body{height:100%; scroll-behavior:smooth;}
-
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-  color:var(--text);
-  background:
-    radial-gradient(1100px 600px at 20% 10%, rgba(110,231,255,.18), transparent 60%),
-    radial-gradient(900px 500px at 80% 0%, rgba(124,92,255,.18), transparent 55%),
-    radial-gradient(900px 600px at 60% 100%, rgba(110,231,255,.10), transparent 60%),
-    linear-gradient(180deg, var(--bg0), var(--bg1));
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-
-/* subtle grid */
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background-image:
-    linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
-  background-size: 70px 70px;
-  opacity:.12;
-  mask-image: radial-gradient(900px 600px at 50% 0%, black, transparent 70%);
-}
-
-/* ===== 左侧导航 ===== */
-.sidebar{
-  position: fixed;
-  left: 18px;
-  top: 18px;
-  bottom: 18px;
-  width: var(--navw);
-  z-index: 40;
-  border-radius: calc(var(--radius) + 6px);
-  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-  border: 1px solid rgba(255,255,255,.14);
-  box-shadow: var(--shadow2);
-  backdrop-filter: blur(12px);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-}
-.sb-head{
-  padding: 16px 16px 12px;
-  border-bottom: 1px solid rgba(255,255,255,.10);
-}
-.sb-title{
-  font-weight: 850;
-  font-size: 16px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.sb-sub{
-  margin-top: 8px;
-  font-size: 12px;
-  color: var(--muted2);
-}
-.sb-nav{
-  padding: 10px 10px 14px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.sb-item{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  text-decoration:none;
-  color: rgba(234,240,255,.82);
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.14);
-}
-.sb-item:hover{
-  border-color: rgba(110,231,255,.28);
-  box-shadow: 0 0 0 3px rgba(110,231,255,.10);
-}
-.sb-item.active{
-  border-color: rgba(110,231,255,.35);
-  background: rgba(110,231,255,.10);
-  box-shadow: 0 0 0 3px rgba(110,231,255,.10);
-  color: rgba(234,240,255,.95);
-}
-.sb-ico{
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: rgba(0,0,0,.16);
-  border: 1px solid rgba(255,255,255,.10);
-  font-size: 14px;
-}
-.sb-foot{
-  margin-top:auto;
-  padding: 12px 14px 14px;
-  color: rgba(234,240,255,.52);
-  font-size: 12px;
-}
-
-/* ===== 主内容布局：给左侧导航腾位置 ===== */
-.wrap{
-  max-width: 1260px;
-  margin: 0 auto;
-  padding: 28px 20px 46px;
-  padding-left: calc(var(--navw) + 46px);
-}
-
-.header{
-  position:relative;
-  border-radius: calc(var(--radius) + 6px);
-  padding: 22px 26px 18px;
-  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-  border: 1px solid rgba(255,255,255,.14);
-  box-shadow: var(--shadow2);
-  overflow:hidden;
-  margin-bottom: 18px;
-}
-.header:after{
-  content:"";
-  position:absolute;
-  left:-30%;
-  top:-40%;
-  width:160%;
-  height:140%;
-  background: radial-gradient(circle at 35% 45%, rgba(110,231,255,.20), transparent 55%),
-              radial-gradient(circle at 70% 35%, rgba(124,92,255,.18), transparent 52%);
-  opacity:.75;
-  filter: blur(8px);
-}
-.header > *{position:relative; z-index:1;}
-
-.title{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  font-weight: 850;
-  letter-spacing: -.3px;
-  font-size: 36px;
-}
-.notice{
-  margin-top: 10px;
-  font-size: 16px;
-  color: var(--muted);
-}
-
-.time-box{
-  margin-top: 16px;
-  display:grid;
-  grid-template-columns: repeat(4, minmax(180px, 1fr));
-  gap: 10px;
-}
-.time-item{
-  background: rgba(0,0,0,.20);
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 999px;
-  padding: 10px 12px;
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.25) inset;
-}
-.time-item .label{ color: var(--muted2); font-size: 14px; }
-.time-item .value{
-  font-variant-numeric: tabular-nums;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: 15px;
-  color: var(--text);
-}
-
-.section{ margin-top: 22px; }
-.section h2{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size: 20px;
-  margin: 18px 0 14px;
-  color: rgba(234,240,255,.92);
-}
-
-.grid{ display:grid; gap: 14px; }
-.grid-5{ grid-template-columns: repeat(5, minmax(210px, 1fr)); }
-
-.card{
-  border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: var(--shadow);
-  padding: 16px 16px 14px;
-  backdrop-filter: blur(10px);
-}
-.card h3{
-  margin:0 0 12px;
-  font-size: 16px;
-  color: rgba(234,240,255,.95);
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.links a{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 12px;
-  padding: 11px 12px;
-  border-radius: 14px;
-  text-decoration:none;
-  color: var(--link2);
-  font-size: 15px;
-  border: 1px solid transparent;
-  background: rgba(0,0,0,.18);
-}
-.links a::after{ content:"↗"; opacity:.65; font-size: 13px; }
-.links a:hover{
-  border-color: rgba(110,231,255,.35);
-  box-shadow: 0 0 0 3px rgba(110,231,255,.10);
-  background: rgba(0,0,0,.26);
-  color: #ffffff;
-}
-
-/* TikTok账号传送门：四区同时展示（更轻量） */
-.portal-grid{
-  display:grid;
-  grid-template-columns: repeat(4, minmax(220px, 1fr));
-  gap: 14px;
-}
-.mini{
-  border-radius: var(--radius);
-  background: rgba(0,0,0,.16);
-  border: 1px solid rgba(255,255,255,.10);
-  padding: 14px;
-}
-.mini .rtitle{
-  font-weight: 800;
-  font-size: 14px;
-  color: rgba(234,240,255,.92);
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom: 10px;
-}
-.sub{
-  font-size: 12px;
-  color: rgba(234,240,255,.55);
-  margin: 10px 0 6px;
-}
-.portal a{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  text-decoration:none;
-  color: var(--link2);
-  font-size: 14px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.05);
-}
-.portal a::after{ content:"↗"; opacity:.65; font-size: 13px; }
-.portal a:hover{
-  border-color: rgba(110,231,255,.28);
-  box-shadow: 0 0 0 3px rgba(110,231,255,.10);
-  background: rgba(0,0,0,.22);
-  color:#fff;
-}
-.tag{
-  display:inline-flex;
-  align-items:center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.16);
-  color: rgba(234,240,255,.70);
-  font-size: 12px;
-  white-space:nowrap;
-}
-.lefttxt{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  min-width:0;
-}
-.user{
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  color: rgba(234,240,255,.90);
-}
-
-/* 小火箭节点：一整排 */
-.nodes{
-  display:grid;
-  grid-template-columns: repeat(3, minmax(240px, 1fr));
-  gap: 14px;
-}
-.node-card{
-  border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: var(--shadow);
-  padding: 14px;
-  backdrop-filter: blur(10px);
-}
-.node-title{
-  font-size: 15px;
-  font-weight: 800;
-  margin-bottom: 10px;
-  color: rgba(234,240,255,.92);
-}
-.node-meta{
-  font-size: 13px;
-  color: var(--muted2);
-  margin-bottom: 10px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.badge{
-  display:inline-flex;
-  align-items:center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(0,0,0,.18);
-  color: rgba(234,240,255,.85);
-  font-size: 12px;
-}
-.badge.ok{
-  border-color: rgba(110,231,255,.28);
-  box-shadow: 0 0 0 3px rgba(110,231,255,.08);
-}
-.badge.warn{
-  border-color: rgba(255,198,88,.35);
-  box-shadow: 0 0 0 3px rgba(255,198,88,.10);
-}
-.badge.danger{
-  border-color: rgba(255,99,132,.35);
-  box-shadow: 0 0 0 3px rgba(255,99,132,.10);
-}
-.qr{
-  width: 100%;
-  max-width: 190px;
-  margin: 0 auto;
-  aspect-ratio: 1 / 1;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(0,0,0,.18);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-}
-.qr img{
-  width: 90%;
-  height: 90%;
-  object-fit: contain;
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px;
-}
-
-/* Apple ID：一整排横向展示 */
-.apple-grid{
-  display:grid;
-  grid-template-columns: repeat(4, minmax(240px, 1fr));
-  gap: 14px;
-}
-.apple-item{
-  border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: var(--shadow);
-  padding: 14px;
-  backdrop-filter: blur(10px);
-}
-.apple-title{
-  font-size: 14px;
-  font-weight: 800;
-  color: rgba(234,240,255,.92);
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom: 12px;
-}
-.kv{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.kv-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.18);
-}
-.k{
-  color: rgba(234,240,255,.55);
-  width: 44px;
-  flex:0 0 auto;
-}
-.v{
-  flex:1;
-  min-width:0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: 12px;
-  color: rgba(234,240,255,.92);
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.copy-btn{
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
-  color: rgba(234,240,255,.80);
-  border-radius: 12px;
-  padding: 7px 10px;
-  cursor:pointer;
-  font-size: 12px;
-  white-space:nowrap;
-}
-.copy-btn:hover{ box-shadow: 0 0 0 3px rgba(255,255,255,.08); }
-.apple-tip{
-  margin-top: 10px;
-  color: rgba(234,240,255,.55);
-  font-size: 13px;
-}
-
-/* 最新资讯：摘要 + 折叠原文 */
-.news-wrap{
-  display:flex;
-  flex-direction:column;
-  gap: 12px;
-}
-.summary{
-  border-radius: var(--radius);
-  background: rgba(0,0,0,.16);
-  border: 1px solid rgba(255,255,255,.10);
-  padding: 14px;
-}
-.summary h4{
-  margin:0 0 8px;
-  font-size: 14px;
-  color: rgba(234,240,255,.92);
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.summary ul{
-  margin: 8px 0 0;
-  padding-left: 18px;
-  color: rgba(234,240,255,.78);
-  line-height: 1.65;
-  font-size: 14px;
-}
-.details{
-  border-radius: var(--radius);
-  background: rgba(0,0,0,.16);
-  border: 1px solid rgba(255,255,255,.10);
-  padding: 12px 14px;
-}
-details summary{
-  cursor:pointer;
-  color: rgba(234,240,255,.85);
-  font-size: 14px;
-}
-.news-item{
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.18);
-}
-.news-item a{
-  color: var(--link2);
-  text-decoration:none;
-  font-size: 14px;
-  line-height: 1.35;
-}
-.news-item a:hover{ text-decoration: underline; }
-.news-meta{ font-size: 12px; color: var(--muted2); margin-top: 6px; }
-
-/* =========================
-   ✅ 悬浮 To do（保持）
-   ========================= */
-.fab{
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 50;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  cursor:pointer;
-  user-select:none;
-  border: 1px solid rgba(110,231,255,.30);
-  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-  box-shadow: 0 18px 50px rgba(0,0,0,.45);
-  backdrop-filter: blur(10px);
-}
-.fab:hover{ box-shadow: 0 0 0 3px rgba(110,231,255,.12), 0 18px 50px rgba(0,0,0,.45); }
-.fab .icon{
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: rgba(0,0,0,.18);
-  border: 1px solid rgba(255,255,255,.12);
-  font-size: 16px;
-}
-.fab .txt{ display:flex; flex-direction:column; line-height:1.1; }
-.fab .txt .t1{ font-size: 12px; color: rgba(234,240,255,.60); }
-.fab .txt .t2{ font-size: 14px; font-weight: 750; color: rgba(234,240,255,.95); }
-
-.drawer-overlay{
-  position: fixed; inset: 0; z-index: 60;
-  background: rgba(0,0,0,.45);
-  opacity: 0; pointer-events: none;
-  transition: opacity .18s ease;
-}
-.drawer{
-  position: fixed; top: 0; right: 0; height: 100%;
-  width: 320px;
-  z-index: 70;
-  transform: translateX(100%);
-  transition: transform .22s ease;
-  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-  border-left: 1px solid rgba(255,255,255,.14);
-  box-shadow: -24px 0 60px rgba(0,0,0,.55);
-  backdrop-filter: blur(12px);
-  display:flex; flex-direction:column;
-}
-.drawer-head{
-  padding: 16px 14px 10px;
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  border-bottom: 1px solid rgba(255,255,255,.10);
-}
-.drawer-title{ display:flex; align-items:center; gap:10px; font-size: 16px; font-weight: 800; color: rgba(234,240,255,.95); }
-.drawer-close{
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(0,0,0,.18);
-  color: rgba(234,240,255,.85);
-  border-radius: 12px;
-  padding: 8px 10px;
-  cursor:pointer;
-  font-size: 12px;
-}
-.drawer-close:hover{ box-shadow: 0 0 0 3px rgba(255,255,255,.08); }
-.drawer-body{ padding: 12px 14px 16px; overflow:auto; }
-
-.todo-card{
-  border-radius: var(--radius);
-  background: rgba(0,0,0,.16);
-  border: 1px solid rgba(255,255,255,.10);
-  padding: 14px;
-}
-.todo-card h3{
-  margin:0 0 10px;
-  font-size: 14px;
-  color: rgba(234,240,255,.90);
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.todo-input{ display:flex; gap:10px; margin-bottom: 10px; }
-.todo-input input{
-  flex:1;
-  background: rgba(0,0,0,.22);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 14px;
-  padding: 11px 12px;
-  color: var(--text);
-  font-size: 14px;
-  outline:none;
-}
-.todo-input input::placeholder{ color: rgba(234,240,255,.45); }
-.todo-input button{
-  background: linear-gradient(180deg, rgba(110,231,255,.22), rgba(110,231,255,.10));
-  border: 1px solid rgba(110,231,255,.35);
-  color: rgba(234,240,255,.95);
-  border-radius: 14px;
-  padding: 11px 14px;
-  font-size: 14px;
-  cursor:pointer;
-  white-space:nowrap;
-}
-.todo-input button:hover{ box-shadow: 0 0 0 3px rgba(110,231,255,.12); }
-.todo-list{ display:flex; flex-direction:column; gap:10px; }
-.todo-item{
-  display:flex; align-items:center; gap:10px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.18);
-}
-.todo-item input[type="checkbox"]{ width:18px; height:18px; accent-color: #6EE7FF; }
-.todo-text{ flex:1; font-size: 14px; color: rgba(234,240,255,.92); line-height:1.3; }
-.todo-text.done{ color: rgba(234,240,255,.45); text-decoration: line-through; }
-.todo-del{
-  background: rgba(124,92,255,.12);
-  border: 1px solid rgba(124,92,255,.25);
-  color: rgba(234,240,255,.85);
-  border-radius: 12px;
-  padding: 7px 10px;
-  cursor:pointer;
-  font-size: 12px;
-}
-.todo-del:hover{ box-shadow: 0 0 0 3px rgba(124,92,255,.12); }
-.todo-footer{
-  margin-top: 10px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  color: rgba(234,240,255,.55);
-  font-size: 12px;
-}
-.todo-clear{
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.10);
-  color: rgba(234,240,255,.75);
-  border-radius: 12px;
-  padding: 7px 10px;
-  cursor:pointer;
-  font-size: 12px;
-}
-.todo-clear:hover{ box-shadow: 0 0 0 3px rgba(255,255,255,.08); }
-
-body.drawer-open .drawer-overlay{ opacity: 1; pointer-events: auto; }
-body.drawer-open .drawer{ transform: translateX(0); }
-
-/* 响应式 */
-@media (max-width: 1200px){
-  .grid-5{ grid-template-columns: repeat(3, minmax(240px, 1fr)); }
-  .portal-grid{ grid-template-columns: repeat(2, minmax(240px,1fr)); }
-  .apple-grid{ grid-template-columns: repeat(2, minmax(240px,1fr)); }
-}
-@media (max-width: 980px){
-  :root{ --navw: 0px; }
-  .sidebar{ display:none; }
-  .wrap{ padding-left: 20px; }
-  .time-box{ grid-template-columns: repeat(2, minmax(180px, 1fr)); }
-  .nodes{ grid-template-columns: 1fr; }
-  .portal-grid{ grid-template-columns: 1fr; }
-  .apple-grid{ grid-template-columns: 1fr; }
-}
-@media (max-width: 520px){
-  .title{ font-size: 28px; }
-  .wrap{ padding: 18px 14px 30px; }
-  .time-box{ grid-template-columns: 1fr; }
-  .drawer{ width: 92vw; }
-  .fab{ right: 12px; bottom: 12px; }
-}
-</style>
-</head>
-
-<body>
-
-<!-- 左侧导航 -->
-<aside class="sidebar">
-  <div class="sb-head">
-    <div class="sb-title">🚀 All in one</div>
-    <div class="sb-sub">快速跳转 · 内部使用</div>
-  </div>
-
-  <nav class="sb-nav" id="sbNav">
-    <a class="sb-item active" href="#sec-links"><span class="sb-ico">📌</span>常用网站</a>
-    <a class="sb-item" href="#sec-portal"><span class="sb-ico">🚪</span>TikTok账号传送门</a>
-    <a class="sb-item" href="#sec-nodes"><span class="sb-ico">🪜</span>小火箭节点</a>
-    <a class="sb-item" href="#sec-apple"><span class="sb-ico">🍎</span>Apple ID（各区）</a>
-    <a class="sb-item" href="#sec-news"><span class="sb-ico">💡</span>最新资讯</a>
-  </nav>
-
-  <div class="sb-foot">提示：手机端自动隐藏导航。</div>
-</aside>
-
-<div class="wrap">
-
-  <!-- 顶部 -->
-  <div class="header">
-    <div class="title">🚀 All in one 工作台</div>
-    <div class="notice">仅海外事业部内部使用</div>
-
-    <div class="time-box">
-      <div class="time-item"><span class="label">🇺🇸 美国</span><span class="value" id="us"></span></div>
-      <div class="time-item"><span class="label">🇸🇬 新加坡</span><span class="value" id="sg"></span></div>
-      <div class="time-item"><span class="label">🇻🇳 越南</span><span class="value" id="vn"></span></div>
-      <div class="time-item"><span class="label">🇲🇾 马来西亚</span><span class="value" id="my"></span></div>
-    </div>
-  </div>
-
-  <!-- 常用网站 -->
-  <div class="section" id="sec-links">
-    <h2>📌 常用网站</h2>
-
-    <div class="grid grid-5">
-      <div class="card">
-        <h3>📱 TikTok运营入口</h3>
-        <div class="links">
-          <a href="https://seller.tiktokshopglobalselling.com/account/login" target="_blank">跨境店后台</a>
-          <a href="https://business.tiktok.com/zh" target="_blank">商务中心后台</a>
-          <a href="https://ads.tiktok.com" target="_blank">广告户后台</a>
-          <a href="https://seller-vn.tiktok.com/account/login" target="_blank">越南本土店后台</a>
-          <a href="https://seller.tiktokglobalshop.com/university/home" target="_blank">卖家大学</a>
-          <a href="https://www.tiktok.com/" target="_blank">TikTok（前台）</a>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>🤖 AI工具</h3>
-        <div class="links">
-          <a href="https://chatgpt.com/" target="_blank">ChatGPT</a>
-          <a href="https://gemini.google.com/app" target="_blank">Gemini</a>
-          <a href="https://elevenlabs.io/app/sign-in?redirect=/app/speech-synthesis/text-to-speech" target="_blank">ElevenLabs</a>
-          <a href="https://labs.google/fx/zh/tools/flow" target="_blank">Nano banana / Veo3</a>
-          <a href="https://sora.chatgpt.com/explore" target="_blank">Sora2</a>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>📊 数据分析</h3>
-        <div class="links">
-          <a href="https://www.fastmoss.com/zh" target="_blank">FastMoss</a>
-          <a href="https://www.kalodata.com/login" target="_blank">Kalodata</a>
-          <a href="https://echotik.live/board" target="_blank">EchoTik</a>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>🚚 发货</h3>
-        <div class="links">
-          <a href="https://oms2.szestp.com/login" target="_blank">易速菲</a>
-          <a href="https://wms.nxcang.com/#/login" target="_blank">南溪</a>
-          <a href="https://www.erp321.com/login.aspx" target="_blank">聚水潭</a>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>🧰 其他常用</h3>
-        <div class="links">
-          <a href="https://translate.google.com/?hl=zh-cn" target="_blank">Google翻译</a>
-          <a href="https://wise.com/zh-cn/currency-converter/" target="_blank">汇率计算</a>
-          <a href="https://www.henghengmao.net/en" target="_blank">视频去水印批量下载</a>
-          <a href="https://nmqzm.199lab.com/" target="_blank">视频去字幕</a>
-          <a href="https://sucaiwang.zhishangsoft.com/#/login?redirect=%2Fhome" target="_blank">云视频管家</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TikTok账号传送门（四区同时展示） -->
-  <div class="section" id="sec-portal">
-    <h2>🚪 TikTok账号传送门</h2>
-
-    <div class="card portal">
-      <div class="portal-grid">
-
-        <div class="mini">
-          <div class="rtitle">🇺🇸 美国</div>
-
-          <div class="sub">自营账号</div>
-          <a href="https://www.tiktok.com/@youpure_official" target="_blank">
-            <span class="lefttxt"><span class="tag">官号</span><span class="user">@youpure_official</span></span>
-          </a>
-          <a href="https://www.tiktok.com/@alice.love.u0" target="_blank">
-            <span class="lefttxt"><span class="tag">渠道号</span><span class="user">@alice.love.u0</span></span>
-          </a>
-          <a href="https://www.tiktok.com/@user210518057249868" target="_blank">
-            <span class="lefttxt"><span class="tag">橱窗号</span><span class="user">@user210518057249868</span></span>
-          </a>
-          <a href="https://www.tiktok.com/@hnckuyd2m0" target="_blank">
-            <span class="lefttxt"><span class="tag">报白号</span><span class="user">@hnckuyd2m0</span></span>
-          </a>
-          <a href="https://www.tiktok.com/@smqnfajfm6" target="_blank">
-            <span class="lefttxt"><span class="tag">报白号</span><span class="user">@smqnfajfm6</span></span>
-          </a>
-
-          <div class="sub">达人账号</div>
-          <div style="color: rgba(234,240,255,.52); font-size: 13px;">（待补充）</div>
-        </div>
-
-        <div class="mini">
-          <div class="rtitle">🇸🇬 新加坡</div>
-          <div class="sub">自营账号</div>
-          <div style="color: rgba(234,240,255,.52); font-size: 13px;">（待补充）</div>
-          <div class="sub">达人账号</div>
-          <div style="color: rgba(234,240,255,.52); font-size: 13px;">（待补充）</div>
-        </div>
-
-        <div class="mini">
-          <div class="rtitle">🇻🇳 越南</div>
-          <div class="sub">自营账号</div>
-          <div style="color: rgba(234,240,255,.52); font-size: 13px;">（待补充）</div>
-          <div class="sub">达人账号</div>
-          <div style="color: rgba(234,240,255,.52); font-size: 13px;">（待补充）</div>
-        </div>
-
-        <div class="mini">
-          <div class="rtitle">🇲🇾 马来西亚</div>
-          <div class="sub">自营账号</div>
-          <div style="color: rgba(234,240,255,.52); font-size: 13px;">（待补充）</div>
-          <div class="sub">达人账号</div>
-          <div style="color: rgba(234,240,255,.52); font-size: 13px;">（待补充）</div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- 小火箭节点（单独一整排） -->
-  <div class="section" id="sec-nodes">
-    <h2>🪜 小火箭节点</h2>
-
-    <div class="nodes">
-      <div class="node-card">
-        <div class="node-title">新加坡</div>
-        <div class="node-meta">
-          <span>到期时间：2026-02-16</span>
-          <span class="badge" id="badge-sg">计算中…</span>
-        </div>
-        <div class="qr">
-          <img src="新加坡.png" alt="新加坡二维码">
-        </div>
-      </div>
-
-      <div class="node-card">
-        <div class="node-title">美国1</div>
-        <div class="node-meta">
-          <span>到期时间：2026-02-28</span>
-          <span class="badge" id="badge-us1">计算中…</span>
-        </div>
-        <div class="qr">
-          <img src="美国1.png" alt="美国1二维码">
-        </div>
-      </div>
-
-      <div class="node-card">
-        <div class="node-title">美国2</div>
-        <div class="node-meta">
-          <span>到期时间：2026-02-28</span>
-          <span class="badge" id="badge-us2">计算中…</span>
-        </div>
-        <div class="qr">
-          <img src="美国2.png" alt="美国2二维码">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Apple ID（单独一整排横向） -->
-  <div class="section" id="sec-apple">
-    <h2>🍎 Apple ID（各区）</h2>
-
-    <div class="apple-grid">
-
-      <div class="apple-item">
-        <div class="apple-title">🇺🇸 美国</div>
-        <div class="kv">
-          <div class="kv-row">
-            <div class="k">账号</div>
-            <div class="v" id="aid-us-user">leichisha815772@hotmail.com</div>
-            <button class="copy-btn" data-copy-target="aid-us-user">复制</button>
-          </div>
-          <div class="kv-row">
-            <div class="k">密码</div>
-            <div class="v" id="aid-us-pass">Zx668844</div>
-            <button class="copy-btn" data-copy-target="aid-us-pass">复制</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="apple-item">
-        <div class="apple-title">🇸🇬 新加坡</div>
-        <div class="kv">
-          <div class="kv-row">
-            <div class="k">账号</div>
-            <div class="v" id="aid-sg-user">csgdj83297@hotmail.com</div>
-            <button class="copy-btn" data-copy-target="aid-sg-user">复制</button>
-          </div>
-          <div class="kv-row">
-            <div class="k">密码</div>
-            <div class="v" id="aid-sg-pass">Zx668844</div>
-            <button class="copy-btn" data-copy-target="aid-sg-pass">复制</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="apple-item">
-        <div class="apple-title">🇻🇳 越南</div>
-        <div class="kv">
-          <div class="kv-row">
-            <div class="k">账号</div>
-            <div class="v" id="aid-vn-user">ankil90770@hotmail.com</div>
-            <button class="copy-btn" data-copy-target="aid-vn-user">复制</button>
-          </div>
-          <div class="kv-row">
-            <div class="k">密码</div>
-            <div class="v" id="aid-vn-pass">Zx668844</div>
-            <button class="copy-btn" data-copy-target="aid-vn-pass">复制</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="apple-item">
-        <div class="apple-title">🇲🇾 马来西亚</div>
-        <div class="kv">
-          <div class="kv-row">
-            <div class="k">账号</div>
-            <div class="v" id="aid-my-user">turne.kirby21@meantodeal.com</div>
-            <button class="copy-btn" data-copy-target="aid-my-user">复制</button>
-          </div>
-          <div class="kv-row">
-            <div class="k">密码</div>
-            <div class="v" id="aid-my-pass">MHtQ2288</div>
-            <button class="copy-btn" data-copy-target="aid-my-pass">复制</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="apple-tip">提示：在Apple store里登陆，请勿在设置里登陆。</div>
-  </div>
-
-  <!-- 最新资讯（摘要 + 折叠原文） -->
-  <div class="section" id="sec-news">
-    <h2>💡 最新资讯</h2>
-
-    <div class="card news-wrap">
-      <div id="newsStatus" style="color: rgba(234,240,255,.72);">正在加载今日 TikTok 重要资讯...</div>
-
-      <div class="summary" id="newsSummaryBox" style="display:none;">
-        <h4>✨ 今日要点（自动提炼）</h4>
-        <ul id="newsSummary"></ul>
-        <div style="margin-top:10px; color: rgba(234,240,255,.55); font-size:12px;">
-          注：此处为“基于标题/关键词”的自动提炼（非大模型）。如需真正 AI 总结，可后续接入后端。
-        </div>
-      </div>
-
-      <div class="details" id="newsDetailsBox" style="display:none;">
-        <details>
-          <summary>展开原始来源链接</summary>
-          <div id="newsList"></div>
-        </details>
-      </div>
-
-      <div style="color: rgba(234,240,255,.55); font-size:13px;">
-        注：资讯来源为公开新闻聚合（Google News RSS）。如在国内网络无法加载，请使用可访问外网的网络环境。
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ✅ 悬浮 To do -->
-<div class="fab" id="todoFab" aria-label="To do List">
-  <div class="icon">📝</div>
-  <div class="txt">
-    <div class="t1">Quick</div>
-    <div class="t2">To do</div>
-  </div>
-</div>
-
-<!-- ✅ Drawer -->
-<div class="drawer-overlay" id="drawerOverlay"></div>
-<aside class="drawer" id="todoDrawer" aria-label="To do Drawer">
-  <div class="drawer-head">
-    <div class="drawer-title">✅ To do List</div>
-    <button class="drawer-close" id="drawerCloseBtn">关闭</button>
-  </div>
-
-  <div class="drawer-body">
-    <div class="todo-card">
-      <h3>📌 今日待办</h3>
-
-      <div class="todo-input">
-        <input id="todoInput" placeholder="输入待办事项，然后点 Add" />
-        <button id="todoAddBtn">Add</button>
-      </div>
-
-      <div class="todo-list" id="todoList"></div>
-
-      <div class="todo-footer">
-        <span id="todoCount">0 items</span>
-        <button class="todo-clear" id="todoClearBtn">清除已完成</button>
-      </div>
-    </div>
-  </div>
-</aside>
-
-<!-- 时间脚本 -->
-<script>
-function updateTime(){
-  function getTime(zone){
-    return new Date().toLocaleString("zh-CN",{
-      timeZone:zone,
-      hour12:false,
-      hour:"2-digit",
-      minute:"2-digit",
-      second:"2-digit"
-    });
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+
+    // 只提供一个接口：/news
+    if (url.pathname !== "/news") {
+      return new Response("OK", { status: 200 });
+    }
+
+    // 先读缓存（KV）
+    const cached = await env.NEWS_KV.get("today", "json");
+    if (cached) {
+      return json(cached);
+    }
+
+    // 没缓存就现拉现算（首次访问会慢一点）
+    const data = await buildNews(env);
+    await env.NEWS_KV.put("today", JSON.stringify(data), { expirationTtl: 60 * 60 * 18 }); // 18小时
+    return json(data);
+  },
+
+  async scheduled(event, env, ctx) {
+    // 每天定时刷新缓存
+    const data = await buildNews(env);
+    await env.NEWS_KV.put("today", JSON.stringify(data), { expirationTtl: 60 * 60 * 24 });
   }
-  document.getElementById("us").innerText = getTime("America/Los_Angeles"); // 美国=洛杉矶时间
-  document.getElementById("sg").innerText = getTime("Asia/Singapore");
-  document.getElementById("vn").innerText = getTime("Asia/Ho_Chi_Minh");
-  document.getElementById("my").innerText = getTime("Asia/Kuala_Lumpur");
-}
-updateTime();
-setInterval(updateTime,1000);
-</script>
+};
 
-<!-- 节点到期倒计时 -->
-<script>
-function daysLeft(yyyy_mm_dd){
-  const [y,m,d] = yyyy_mm_dd.split("-").map(Number);
-  const end = new Date(y, m-1, d, 23, 59, 59);
+function json(obj) {
+  return new Response(JSON.stringify(obj), {
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store"
+    }
+  });
+}
+
+/**
+ * 1) 拉取资讯（这里用 Google News RSS 举例）
+ * 2) 调用 OpenAI 总结成中文要点
+ */
+async function buildNews(env) {
   const now = new Date();
-  const diff = end.getTime() - now.getTime();
-  return Math.ceil(diff / (1000*60*60*24));
-}
-function setBadge(id, leftDays){
-  const el = document.getElementById(id);
-  if(!el) return;
-  let cls = "ok";
-  if(leftDays <= 7) cls = "warn";
-  if(leftDays <= 3) cls = "danger";
-  el.className = "badge " + cls;
-  el.textContent = (leftDays >= 0) ? `剩余 ${leftDays} 天` : `已到期`;
-}
-function updateNodeCountdown(){
-  setBadge("badge-sg", daysLeft("2026-02-16"));
-  setBadge("badge-us1", daysLeft("2026-02-28"));
-  setBadge("badge-us2", daysLeft("2026-02-28"));
-}
-updateNodeCountdown();
-setInterval(updateNodeCountdown, 60*1000);
-</script>
+  const date = now.toISOString().slice(0, 10);
 
-<!-- 复制按钮（Apple ID） -->
-<script>
-document.addEventListener("click", async (e)=>{
-  const btn = e.target.closest("[data-copy-target]");
-  if(!btn) return;
-  const id = btn.getAttribute("data-copy-target");
-  const el = document.getElementById(id);
-  const text = el ? el.textContent.trim() : "";
-  try{
-    await navigator.clipboard.writeText(text);
-    const old = btn.textContent;
-    btn.textContent = "已复制";
-    setTimeout(()=>btn.textContent = old, 900);
-  }catch(err){
-    alert("复制失败，请手动复制。");
-  }
-});
-</script>
-
-<!-- 最新资讯：加载 + 自动提炼（标题关键词规则） -->
-<script>
-function titleToBullet(title){
-  // 轻量“提炼”：尽量把标题中的核心对象抽出来
-  const t = title.replace(/\s+/g,' ').trim();
-  const keywords = [
-    "TikTok Shop","TikTok","seller","shipping","logistics","ads","policy","ban","U.S.","US","EU","privacy","commerce","fulfillment","3PL","warehouse"
-  ];
-  const hit = keywords.filter(k => t.toLowerCase().includes(k.toLowerCase())).slice(0, 4);
-  if(hit.length){
-    return `${t}（关键词：${hit.join(" / ")}）`;
-  }
-  return t;
-}
-
-async function loadNews(){
-  const status = document.getElementById("newsStatus");
-  const list = document.getElementById("newsList");
-  const sumBox = document.getElementById("newsSummaryBox");
-  const sum = document.getElementById("newsSummary");
-  const detailsBox = document.getElementById("newsDetailsBox");
-
-  const rssUrl = "https://news.google.com/rss/search?q=" +
-    encodeURIComponent("TikTok Shop OR TikTok seller center OR TikTok ads policy OR TikTok logistics") +
+  // 你也可以改成更精准的关键词组合
+  const rssUrl =
+    "https://news.google.com/rss/search?q=" +
+    encodeURIComponent('("TikTok Shop" OR TikTok) (seller OR shipping OR policy OR ads)') +
     "&hl=en-US&gl=US&ceid=US:en";
 
-  const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
+  const rssText = await fetch(rssUrl, {
+    headers: { "user-agent": "aio-workdesk/1.0" }
+  }).then(r => r.text());
 
-  try{
-    const res = await fetch(api, { cache: "no-store" });
-    if(!res.ok) throw new Error("fetch failed");
-    const data = await res.json();
-    const items = (data.items || []).slice(0, 6);
+  const items = parseRssItems(rssText).slice(0, 10);
 
-    if(items.length === 0){
-      status.innerText = "今日暂无抓取到相关资讯（可稍后刷新）。";
-      return;
-    }
+  const titles = items.map((it, i) => `${i + 1}. ${it.title}`).join("\n");
+  const prompt = `
+你是跨境电商团队的情报编辑。
+下面是今天抓取到的新闻标题列表（主要与 TikTok / TikTok Shop 卖家、物流、政策、广告相关）。
+请输出：
+1）用中文写 4-7 条“今日要点”，每条一句话，极度精炼，面向运营团队，可直接读懂。
+2）不要输出英文。
+3）不要输出“关键词/算法说明/免责声明”等多余信息。
+4）如果标题重复或意义不大，请合并或忽略。
 
-    status.innerText = "已更新今日 TikTok 重要资讯：";
+标题列表：
+${titles}
+`.trim();
 
-    // 原文折叠
-    list.innerHTML = items.map(it => {
-      const date = it.pubDate ? new Date(it.pubDate).toLocaleString("zh-CN", { hour12:false }) : "";
-      const source = it.author ? it.author : (it.link ? new URL(it.link).hostname : "");
-      return `
-        <div class="news-item">
-          <a href="${it.link}" target="_blank">${it.title}</a>
-          <div class="news-meta">${source} · ${date}</div>
-        </div>
-      `;
-    }).join("");
-    detailsBox.style.display = "block";
+  const bullets = await openaiSummarize(env, prompt);
 
-    // 自动提炼
-    const bullets = items.map(it => titleToBullet(it.title)).slice(0, 6);
-    sum.innerHTML = bullets.map(b => `<li>${b}</li>`).join("");
-    sumBox.style.display = "block";
-
-  }catch(e){
-    status.innerText = "资讯加载失败（可能是网络/跨域/服务不可用）。";
-  }
+  return {
+    date,
+    bullets,
+    sources: items.map(it => ({
+      title: it.title,
+      url: it.link,
+      source: it.source || "",
+      published: it.pubDate || ""
+    }))
+  };
 }
-loadNews();
-</script>
 
-<!-- 左侧导航：当前区域高亮 -->
-<script>
-(function(){
-  const links = Array.from(document.querySelectorAll("#sbNav .sb-item"));
-  const sections = links.map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
-
-  const obs = new IntersectionObserver((entries)=>{
-    const visible = entries.filter(e => e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
-    if(!visible) return;
-    const id = "#" + visible.target.id;
-    links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === id));
-  }, { root: null, threshold: [0.25, 0.45, 0.6] });
-
-  sections.forEach(s => obs.observe(s));
-})();
-</script>
-
-<!-- ✅ Drawer 开关：记住状态 -->
-<script>
-const DRAWER_KEY = "aio_drawer_open_v1";
-function setDrawer(open){
-  document.body.classList.toggle("drawer-open", open);
-  localStorage.setItem(DRAWER_KEY, open ? "1" : "0");
-}
-function getDrawer(){ return localStorage.getItem(DRAWER_KEY) === "1"; }
-
-document.getElementById("todoFab").addEventListener("click", ()=> setDrawer(true));
-document.getElementById("drawerCloseBtn").addEventListener("click", ()=> setDrawer(false));
-document.getElementById("drawerOverlay").addEventListener("click", ()=> setDrawer(false));
-document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") setDrawer(false); });
-setDrawer(getDrawer());
-</script>
-
-<!-- To do List（本地保存） -->
-<script>
-const TODO_KEY = "aio_todos_v1";
-function loadTodos(){
-  try{
-    const raw = localStorage.getItem(TODO_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }catch(e){ return []; }
-}
-function saveTodos(todos){ localStorage.setItem(TODO_KEY, JSON.stringify(todos)); }
-function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g, s => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[s]));
-}
-function renderTodos(){
-  const list = document.getElementById("todoList");
-  const count = document.getElementById("todoCount");
-  const todos = loadTodos();
-
-  if(todos.length === 0){
-    list.innerHTML = `<div style="color: rgba(234,240,255,.55); font-size:13px;">暂无待办。你可以在上方输入后 Add。</div>`;
-    count.textContent = `0 items`;
-    return;
+/**
+ * OpenAI Responses API（服务端调用）
+ * 说明：务必把 OPENAI_API_KEY 配成 Worker 环境变量
+ */
+async function openaiSummarize(env, prompt) {
+  if (!env.OPENAI_API_KEY) {
+    return ["未配置 OPENAI_API_KEY（请在 Cloudflare Worker 的环境变量里添加）"];
   }
 
-  list.innerHTML = todos.map((t, idx) => `
-    <div class="todo-item">
-      <input type="checkbox" ${t.done ? "checked" : ""} data-idx="${idx}" class="todo-toggle"/>
-      <div class="todo-text ${t.done ? "done" : ""}">${escapeHtml(t.text)}</div>
-      <button class="todo-del" data-idx="${idx}">删除</button>
-    </div>
-  `).join("");
+  const res = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      "authorization": `Bearer ${env.OPENAI_API_KEY}`,
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      model: env.OPENAI_MODEL || "gpt-5.2",
+      input: prompt
+    })
+  });
 
-  const left = todos.filter(t => !t.done).length;
-  count.textContent = `${left} items left`;
-}
-function addTodo(){
-  const input = document.getElementById("todoInput");
-  const text = (input.value || "").trim();
-  if(!text) return;
-
-  const todos = loadTodos();
-  todos.unshift({ text, done:false });
-  saveTodos(todos);
-
-  input.value = "";
-  renderTodos();
-}
-function clearDone(){
-  const todos = loadTodos().filter(t => !t.done);
-  saveTodos(todos);
-  renderTodos();
-}
-document.getElementById("todoAddBtn").addEventListener("click", addTodo);
-document.getElementById("todoInput").addEventListener("keydown", (e)=>{ if(e.key === "Enter") addTodo(); });
-
-document.getElementById("todoList").addEventListener("click", (e)=>{
-  const todos = loadTodos();
-  if(e.target.classList.contains("todo-toggle")){
-    const idx = Number(e.target.getAttribute("data-idx"));
-    if(Number.isFinite(idx) && todos[idx]){
-      todos[idx].done = !todos[idx].done;
-      saveTodos(todos);
-      renderTodos();
-    }
-    return;
+  if (!res.ok) {
+    const t = await res.text();
+    return [`AI 总结失败：HTTP ${res.status}`, t.slice(0, 200)];
   }
-  if(e.target.classList.contains("todo-del")){
-    const idx = Number(e.target.getAttribute("data-idx"));
-    if(Number.isFinite(idx) && todos[idx]){
-      todos.splice(idx, 1);
-      saveTodos(todos);
-      renderTodos();
+
+  const data = await res.json();
+  // Responses API 输出字段结构可能包含 output_text
+  const text = (data.output_text || "").trim();
+  if (!text) return ["AI 未返回内容"];
+
+  // 允许模型返回用换行分点：我们统一成 bullets 数组
+  const lines = text
+    .split(/\n+/)
+    .map(s => s.replace(/^\s*[-•\d.、]+\s*/, "").trim())
+    .filter(Boolean);
+
+  // 最多取 7 条
+  return lines.slice(0, 7);
+}
+
+/**
+ * 超轻量 RSS 解析（足够用）
+ */
+function parseRssItems(xml) {
+  const items = [];
+  const blocks = xml.split("<item>").slice(1);
+  for (const b of blocks) {
+    const seg = b.split("</item>")[0] || "";
+    const title = pickTag(seg, "title");
+    const link = pickTag(seg, "link");
+    const pubDate = pickTag(seg, "pubDate");
+    // Google News 的 source 标签有时是 <source url="...">xxx</source>
+    const source = (seg.match(/<source[^>]*>([\s\S]*?)<\/source>/i)?.[1] || "").trim();
+    if (title && link) {
+      items.push({ title: decodeHtml(title), link: decodeHtml(link), pubDate: decodeHtml(pubDate), source: decodeHtml(source) });
     }
   }
-});
-document.getElementById("todoClearBtn").addEventListener("click", clearDone);
-renderTodos();
-</script>
-
-<!-- 密码 -->
-<script>
-const PASSWORD = "YouPure2026";
-const input = prompt("请输入工作台密码：");
-if(input !== PASSWORD){
-  alert("密码错误，无权限访问");
-  location.href="about:blank";
+  return items;
 }
-</script>
 
-</body>
-</html>
+function pickTag(s, tag) {
+  const m = s.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"));
+  return m ? m[1].trim() : "";
+}
+
+function decodeHtml(str) {
+  return str
+    .replace(/<!\[CDATA\[(.*?)\]\]>/g, "$1")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
